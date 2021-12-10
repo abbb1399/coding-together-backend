@@ -28,9 +28,6 @@ const coachSchema = new mongoose.Schema({
   timestamps: true
 })
 
-
-
 const Coach = mongoose.model('Coach',coachSchema)
-
 
 module.exports = Coach

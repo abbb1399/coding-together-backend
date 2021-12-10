@@ -6,7 +6,7 @@ const router = new express.Router()
 router.post('/requests', async (req, res) =>{
 
   const request = new Request({
-    ...req.body
+    ...req.body,
   })
 
   try{
@@ -26,18 +26,19 @@ router.get('/requests', async (req,res) =>{
   }
 })
 
-router.get('/requests/:id', async (req,res)=>{
-  const _id = req.params.id
+router.get('/requests/:userId', async (req,res)=>{
+  const userId = req.params.userId
+  console.log(userId)
 
   try{
-    const request = await Request.findOne({_id, owner: req.user._id})
-    
+    const request = await Request.find({coachId : userId})
+    // console.log(request)
 
     if(!request){
       return res.status(404).send()
     }
 
-    res.send(coach)
+    res.send(request)
   }catch(e){
     res.status(500).send()
   }
