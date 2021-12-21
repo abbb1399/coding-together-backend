@@ -57,6 +57,23 @@ router.post('/users/logoutAll', auth, async (req,res)=>{
   }
 })
 
+//모든 유저 정보 불러오기
+router.get('/users/usersList', async (req, res) => {
+  try{
+  
+    const users = await User.find( {} )
+    console.log(users)
+    
+    if(!users){
+      return res.status(404).send()
+    }
+
+    res.send(users)
+  }catch(e){
+    res.status(500).send()
+  }
+})
+
 
 // 내 프로필 보기
 router.get('/users/me',auth, async (req,res)=>{

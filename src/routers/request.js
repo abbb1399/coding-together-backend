@@ -28,7 +28,6 @@ router.get('/requests', async (req,res) =>{
 
 router.get('/requests/:userId', async (req,res)=>{
   const userId = req.params.userId
-  console.log(userId)
 
   try{
     const request = await Request.find({coachId : userId})
