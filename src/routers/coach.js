@@ -17,14 +17,34 @@ router.post('/coaches', auth, async (req,res) => {
   }
 })
 
+// 코치리스트 불러오기
 router.get('/coach-list', async (req,res)=>{
   try{
-    const users = await Coach.find({})
-    res.send(users)
+    const coaches = await Coach.find({}).limit(2)
+    
+    res.send(coaches)
   }catch(e){
     res.send(500).send()
   }
 })
+
+// 코치리스트 paginiation
+router.get('/more-coach-list/:page', async (req,res)=>{
+  const pageNum = parseInt(req.params.page)
+  // console.log(pageNum)
+
+  try{
+    const coaches = await Coach.find({}).skip(pageNum).limit(2)
+
+    // if(coaches.length !== 0){
+      res.send(coaches)
+    // }
+  }catch(e){
+    res.send(500).send()
+  }
+})
+
+
 
 
 // GET /coaches?completed=false
@@ -43,7 +63,6 @@ router.get('/coaches', auth,  async (req,res) => {
     sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
   }
 
-
   try{
     await req.user.populate({
       path: 'coaches',
@@ -54,7 +73,7 @@ router.get('/coaches', auth,  async (req,res) => {
         sort
       }
     })
-    // console.log(req.user.coaches)
+
     res.send(req.user.coaches)
   }catch(e){
     res.send(500).send()

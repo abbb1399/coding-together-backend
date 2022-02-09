@@ -60,9 +60,8 @@ router.post('/users/logoutAll', auth, async (req,res)=>{
 //모든 유저 정보 불러오기
 router.get('/users/usersList', async (req, res) => {
   try{
-  
     const users = await User.find( {} )
-    console.log(users)
+    // console.log(users)
     
     if(!users){
       return res.status(404).send()
@@ -106,7 +105,6 @@ router.delete('/users/me', auth, async (req,res)=>{
   try{
     await req.user.remove()
     
-
     res.send(req.user)
   }catch(e){
     res.status(500).send()
@@ -117,13 +115,13 @@ router.delete('/users/me', auth, async (req,res)=>{
 const upload = multer({
   // dest:'avatars',
   limits:{
-    fileSize: 1000000
+    // 5메가 제한
+    fileSize: 5000000
   },
   fileFilter(req, file, cb){
     if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-      return cb(new Error('please upload a jpg/jpeg/png file'))
+      return cb(new Error('jpg/jpeg/png 파일만 업로드 해주세요.'))
     }
-
     cb(undefined, true)
   }
 })
@@ -156,7 +154,7 @@ router.get('/users/:id/avatar', async (req,res) =>{
     }
 
     // setting respone-header
-    res.set('Content-Type','image/png')
+    res.set('Content-Type','image/*')
     
     res.send(user.avatar)
   }catch(e){
