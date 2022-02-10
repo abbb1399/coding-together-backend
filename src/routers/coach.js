@@ -20,7 +20,7 @@ router.post('/coaches', auth, async (req,res) => {
 // 코치리스트 불러오기
 router.get('/coach-list', async (req,res)=>{
   try{
-    const coaches = await Coach.find({}).limit(2)
+    const coaches = await Coach.find()
     
     res.send(coaches)
   }catch(e){
@@ -31,20 +31,38 @@ router.get('/coach-list', async (req,res)=>{
 // 코치리스트 paginiation
 router.get('/more-coach-list/:page', async (req,res)=>{
   const pageNum = parseInt(req.params.page)
-  // console.log(pageNum)
+  
+  const params = {}
+  if(req.query.filter !== 'all'){
+    params.areas = req.query.filter
+  }
 
   try{
-    const coaches = await Coach.find({}).skip(pageNum).limit(2)
-
-    // if(coaches.length !== 0){
-      res.send(coaches)
-    // }
+    const coaches = await Coach.find(params).skip(pageNum).limit(2).sort({updatedAt: -1})
+    // console.log(coaches)
+    res.send(coaches)
   }catch(e){
     res.send(500).send()
   }
 })
 
 
+// 코치리스트 테스트
+router.get('/test', async (req,res)=>{
+  console.log(req.query.areas)
+  const areas = {
+    areas: req.query.areas
+  }
+  console.log(areas)
+
+  try{
+    const coaches = await Coach.find({})
+    
+    res.send(coaches)
+  }catch(e){
+    res.send(500).send()
+  }
+})
 
 
 // GET /coaches?completed=false
