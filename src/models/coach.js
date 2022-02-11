@@ -23,6 +23,9 @@ const coachSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User'
+    },
+    thumbnail:{
+      type: Buffer
     }
 },{
   timestamps: true

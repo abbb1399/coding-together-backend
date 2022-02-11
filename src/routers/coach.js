@@ -1,7 +1,13 @@
 const express = require('express')
+const fs = require('fs')
+const path = require("path");
+
 const Coach = require('../models/coach')
 const auth = require('../middleware/auth')
 const router = new express.Router()
+const multer = require('multer')
+const sharp = require('sharp')
+
 
 router.post('/coaches', auth, async (req,res) => {
   const coach = new Coach({
@@ -151,6 +157,60 @@ router.delete('/coaches/:id', auth, async (req,res) =>{
   }catch(e){
     res.status(500).send()
   }
+})
+
+
+// Multer 업로드
+// const upload = multer({
+//   dest:'images',
+//   limits:{
+//     // 5메가 제한
+//     fileSize: 5000000
+//   },
+//   fileFilter(req, file, cb){
+//     if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+//       return cb(new Error('jpg/jpeg/png 파일만 업로드 해주세요.'))
+//     }
+//     cb(undefined, true)
+//   }
+// })
+
+let storage = multer.diskStorage({
+  destination: function(req, file ,callback){
+      callback(null, "images/")
+  },
+  filename: function(req, file, callback){
+      let extension = path.extname(file.originalname);
+      let basename = path.basename(file.originalname, extension);
+      callback(null, basename + "-" + Date.now() + extension);
+  }
+});
+
+// 1. 미들웨어 등록
+let upload = multer({
+  storage: storage
+});
+
+
+// 이미지 업로드
+router.post('/images', upload.single('images') ,(req, res) => {
+  console.log(req.file.originalname)
+  console.log(req.file.filename)
+  // 디비에 파일네임 저장해
+
+
+  res.send()
+}, (error,req,res,next)=>{
+  res.status(400).send({error: error.message})
+});
+
+
+// 이미지 불러오기
+router.get('/images', function (req,res){
+  fs.readFile('./images/d4ff538c3c0a2778016c5769de866785.png', function(error, data){
+    res.writeHead(200, {'Content-Type' : 'image/png'})
+    res.end(data)
+  })
 })
 
 module.exports = router

@@ -111,9 +111,9 @@ router.delete('/users/me', auth, async (req,res)=>{
   }
 })
 
-// 업로드
+// Multer 업로드
 const upload = multer({
-  // dest:'avatars',
+  // dest:'images',
   limits:{
     // 5메가 제한
     fileSize: 5000000
@@ -126,8 +126,10 @@ const upload = multer({
   }
 })
 
+
 // 아바타 업로드
 router.post('/users/me/avatar', auth , upload.single('avatar') , async (req,res)=>{
+  // sharp로 이미지 가공
   const buffer = await sharp(req.file.buffer).resize({ width:250, height:250 }).png().toBuffer()
 
   req.user.avatar = buffer
@@ -137,6 +139,8 @@ router.post('/users/me/avatar', auth , upload.single('avatar') , async (req,res)
   res.status(400).send({ error : error.message })
 })
 
+
+
 // 아바타 삭제
 router.delete('/users/me/avatar', auth, upload.single('avatar'), async (req,res) =>{
   req.user.avatar = undefined
@@ -144,17 +148,18 @@ router.delete('/users/me/avatar', auth, upload.single('avatar'), async (req,res)
   res.send()
 })
 
-// fetching avatar
+// 아바타 불러오기
 router.get('/users/:id/avatar', async (req,res) =>{
   try{
     const user = await User.findById(req.params.id)
 
+    // if(!user || !user.avatar){
     if(!user || !user.avatar){
       throw new Error()
     }
-
-    // setting respone-header
-    res.set('Content-Type','image/*')
+    
+    // respone-header 세팅
+    res.set('Content-Type','image/png')
     
     res.send(user.avatar)
   }catch(e){

@@ -2,6 +2,8 @@
 node_modules
 /dist
 playground
+images
+config
 
 # local env files
 .env.local
