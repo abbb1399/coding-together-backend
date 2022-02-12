@@ -196,7 +196,7 @@ const upload = multer({
 router.post('/images', upload.single('images') ,(req, res) => {
   console.log(req.file.originalname)
   console.log(req.file.filename)
-  
+
   res.send(req.file.filename)
 }, (error,req,res,next)=>{
   res.status(400).send({error: error.message})
@@ -204,8 +204,10 @@ router.post('/images', upload.single('images') ,(req, res) => {
 
 
 // 이미지 불러오기
-router.get('/images', function (req,res){
-  fs.readFile('./images/d4ff538c3c0a2778016c5769de866785.png', function(error, data){
+router.get('/images/:filename', function (req,res){
+  const filename = req.params.filename
+
+  fs.readFile(`./images/${filename}`, function(error, data){
     res.writeHead(200, {'Content-Type' : 'image/png'})
     res.end(data)
   })
