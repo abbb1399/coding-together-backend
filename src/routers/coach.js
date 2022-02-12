@@ -175,19 +175,19 @@ router.delete('/coaches/:id', auth, async (req,res) =>{
 //   }
 // })
 
-let storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function(req, file ,callback){
-      callback(null, "images/")
+    callback(null, "images/")
   },
   filename: function(req, file, callback){
-      let extension = path.extname(file.originalname);
-      let basename = path.basename(file.originalname, extension);
-      callback(null, basename + "-" + Date.now() + extension);
+    const extension = path.extname(file.originalname);
+    const basename = path.basename(file.originalname, extension);
+    callback(null, basename + "-" + Date.now() + extension);
   }
 });
 
-// 1. 미들웨어 등록
-let upload = multer({
+// 미들웨어 등록
+const upload = multer({
   storage: storage
 });
 
@@ -196,10 +196,8 @@ let upload = multer({
 router.post('/images', upload.single('images') ,(req, res) => {
   console.log(req.file.originalname)
   console.log(req.file.filename)
-  // 디비에 파일네임 저장해
-
-
-  res.send()
+  
+  res.send(req.file.filename)
 }, (error,req,res,next)=>{
   res.status(400).send({error: error.message})
 });
