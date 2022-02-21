@@ -44,11 +44,22 @@ router.get('/more-coach-list/:page', async (req,res)=>{
   }
 
   try{
-    const coaches = await Coach.find(params).skip(pageNum).limit(2).sort({updatedAt: -1})
+    const coaches = await Coach.find(params).skip(pageNum).limit(4).sort({updatedAt: -1})
     // console.log(coaches)
     res.send(coaches)
   }catch(e){
     res.send(500).send()
+  }
+})
+
+// 내 글보기
+router.get('/my-list', auth, async(req,res)=>{
+  const coach = await Coach.findOne({owner: req.user._id})
+  
+  try{
+    res.send(coach)
+  }catch(e){
+    console.log(e)
   }
 })
 
