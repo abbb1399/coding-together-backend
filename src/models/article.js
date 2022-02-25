@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const coachSchema = new mongoose.Schema({
+const articleSchema = new mongoose.Schema({
     name: {
       type:String,
       required:true,
@@ -31,6 +31,6 @@ const coachSchema = new mongoose.Schema({
   timestamps: true
 })
 
-const Coach = mongoose.model('Coach',coachSchema)
+const Article = mongoose.model('Article',articleSchema)
 
-module.exports = Coach
+module.exports = Article

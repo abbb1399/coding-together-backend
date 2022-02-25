@@ -2,40 +2,40 @@ const express = require('express')
 const fs = require('fs')
 const path = require("path");
 
-const Coach = require('../models/coach')
+const Article = require('../models/article')
 const auth = require('../middleware/auth')
 const router = new express.Router()
 const multer = require('multer')
 const sharp = require('sharp')
 
 
-router.post('/coaches', auth, async (req,res) => {
-  const coach = new Coach({
+router.post('/articles', auth, async (req,res) => {
+  const article = new Article({
     ...req.body,
     owner: req.user._id
   })
 
   try{
-    await coach.save()
-    res.status(201).send(coach)
+    await article.save()
+    res.status(201).send(article)
   }catch(e){
     res.status(400).send(e)
   }
 })
 
-// 코치리스트 불러오기
-router.get('/coach-list', async (req,res)=>{
+// 공고 불러오기
+router.get('/article-list', async (req,res)=>{
   try{
-    const coaches = await Coach.find()
+    const articles = await Article.find()
     
-    res.send(coaches)
+    res.send(articles)
   }catch(e){
     res.send(500).send()
   }
 })
 
-// 코치리스트 paginiation
-router.get('/more-coach-list/:page', async (req,res)=>{
+// 공고 paginiation
+router.get('/more-article-list/:page', async (req,res)=>{
   const pageNum = parseInt(req.params.page)
   
   const params = {}
@@ -44,27 +44,26 @@ router.get('/more-coach-list/:page', async (req,res)=>{
   }
 
   try{
-    const coaches = await Coach.find(params).skip(pageNum).limit(4).sort({updatedAt: -1})
-    // console.log(coaches)
-    res.send(coaches)
+    const articles = await Article.find(params).skip(pageNum).limit(4).sort({updatedAt: -1})
+    res.send(articles)
   }catch(e){
-    res.send(500).send()
+    res.sendStatus(500).send()
   }
 })
 
-// 내 글보기
-router.get('/my-list', auth, async(req,res)=>{
-  const coach = await Coach.findOne({owner: req.user._id})
+// 내 공고 보기
+router.get('/my-article', auth, async(req,res)=>{
+  const article = await Article.findOne({owner: req.user._id})
   
   try{
-    res.send(coach)
+    res.send(article)
   }catch(e){
     console.log(e)
   }
 })
 
 
-// 코치리스트 테스트
+// 공고리스트 테스트
 router.get('/test', async (req,res)=>{
   console.log(req.query.areas)
   const areas = {
@@ -73,19 +72,19 @@ router.get('/test', async (req,res)=>{
   console.log(areas)
 
   try{
-    const coaches = await Coach.find({})
+    const articles = await Article.find({})
     
-    res.send(coaches)
+    res.send(articles)
   }catch(e){
     res.send(500).send()
   }
 })
 
 
-// GET /coaches?completed=false
-// GET /coaches?limit=10&skip=20
-// GET /coaches?sortBy=createdAt:desc
-router.get('/coaches', auth,  async (req,res) => {
+// GET /articles?completed=false
+// GET /articles?limit=10&skip=20
+// GET /articles?sortBy=createdAt:desc
+router.get('/articles', auth,  async (req,res) => {
   const match = {}
   const sort = {}
 
@@ -100,7 +99,7 @@ router.get('/coaches', auth,  async (req,res) => {
 
   try{
     await req.user.populate({
-      path: 'coaches',
+      path: 'articles',
       match,
       options:{
         limit: parseInt(req.query.limit) || null,
@@ -109,62 +108,66 @@ router.get('/coaches', auth,  async (req,res) => {
       }
     })
 
-    res.send(req.user.coaches)
+    res.send(req.user.articles)
   }catch(e){
     res.send(500).send()
   }
 })
 
-router.get('/coaches/:id',auth, async (req,res)=>{
+router.get('/articles/:id',auth, async (req,res)=>{
   const _id = req.params.id
 
   try{
-    const coach = await Coach.findOne({ _id, owner: req.user._id})
+    const article = await Article.findOne({ _id, owner: req.user._id})
 
-    if(!coach){
+    if(!article){
       return res.status(404).send()
     }
 
-    res.send(coach)
+    res.send(article)
   }catch(e){
     res.status(500).send()
   }
 })
 
-router.patch('/coaches/:id', auth, async (req,res) =>{
+// 공고 업데이트
+router.patch('/articles/:id', auth, async (req,res) =>{
   const updates = Object.keys(req.body)
   const allowedUpdates = ['name','areas','description']
   const isValidOperation = updates.every((update)=> allowedUpdates.includes(update))
 
   if(!isValidOperation){
-    return res.status(400).send({error: 'Invalid updates!'})
+    return res.status(400).send({error: '업데이트 요소가 아닙니다.!'})
   }
 
   try{
-    const coach = await Coach.findOne({ _id: req.params.id, owner: req.user._id })
-    
-    if(!coach){
-      return res.status(400).send()
+    // 글쓴이가 나일때
+    const article = await Article.findOne({ _id: req.params.id, owner: req.user._id })
+    console.log(article)
+
+    if(!article){
+      return res.status(400).send({error: '글주인이 아닙니다'})
     }
 
-    updates.forEach((update)=> coach[update] = req.body[update])
-    await coach.save()
+    updates.forEach((update)=> article[update] = req.body[update])
+    await article.save()
 
-    res.send(coach)
+    res.send(article)
   }catch(e){
     res.status(400).send(e)
   }
 })
 
-router.delete('/coaches/:id', auth, async (req,res) =>{
-  try{
-    const coach = await Coach.findOneAndDelete({ _id: req.params.id, owner: req.user._id })
 
-    if(!coach){
+// 공고 삭제
+router.delete('/article', auth, async (req,res) =>{
+  try{
+    const article = await Article.findOneAndDelete({ owner: req.user._id })
+
+    if(!article){
       return res.status(404).send()
     }
-
-    res.send(coach)
+    res.send()
   }catch(e){
     res.status(500).send()
   }
@@ -205,9 +208,6 @@ const upload = multer({
 
 // 이미지 업로드
 router.post('/images', upload.single('images') ,(req, res) => {
-  console.log(req.file.originalname)
-  console.log(req.file.filename)
-
   res.send(req.file.filename)
 }, (error,req,res,next)=>{
   res.status(400).send({error: error.message})

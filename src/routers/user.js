@@ -25,13 +25,14 @@ router.post('/users/login', async (req,res)=>{
     const user = await User.findByCredentials(req.body.email, req.body.password)
     // 토큰 생성
     const token = await user.generateAuthToken()
+
     res.send({user, token})
   }catch(e){
     res.status(400).send()
   }
 })
 
-// 로그아웃
+// 로그아웃 하나씩 - 컴/스마트폰/태블릿 ..
 router.post('/users/logout', auth, async (req,res) =>{
   try{
     req.user.tokens = req.user.tokens.filter((token)=>{

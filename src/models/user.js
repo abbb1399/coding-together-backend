@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bycript = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const Coach = require('./coach')
+const Article = require('./article')
 
 const userSchema = new mongoose.Schema({
   name:{
@@ -56,11 +56,11 @@ const userSchema = new mongoose.Schema({
 })
 
 // virtual property
-userSchema.virtual('coaches', {
-  ref: 'Coach',
+userSchema.virtual('articles', {
+  ref: 'Article',
   localField: '_id',
   foreignField: 'owner'
-  // 여기 user_id와 coach의 onwer id가 같을때
+  // 여기 user_id와 article의 onwer id가 같을때
 })
 
 
@@ -125,10 +125,10 @@ userSchema.pre('save', async function(next){
   next()
 })
 
-// Delete coaches when user is removed
+// Delete articles when user is removed
 userSchema.pre('remove', async function (next) {
   const user = this
-  await Coach.deleteMany({ owner: user._id})
+  await Articles.deleteMany({ owner: user._id})
   next()
 })
 
