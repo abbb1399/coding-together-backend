@@ -2,6 +2,10 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 
 const scheduleSchema = new mongoose.Schema({
+  id:{
+    type:String,
+    required:true
+  },
   calendarId:{
     type:String,
     required:true
@@ -34,7 +38,12 @@ const scheduleSchema = new mongoose.Schema({
   end:{
     type: Date,
     required:true
-  }
+  },
+  owner:{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
 },{
   timestamps: true
 })

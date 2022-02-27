@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 })
 
-// virtual property
+// virtual property with Article
 userSchema.virtual('articles', {
   ref: 'Article',
   localField: '_id',
@@ -64,6 +64,12 @@ userSchema.virtual('articles', {
 })
 
 
+// virtual property with Schedule
+userSchema.virtual('schedules', {
+  ref: 'Schedule',
+  localField: '_id',
+  foreignField: 'owner'
+})
 
 
 // user에서 불필요한 정보제거하는 함수 - toJSON은 해당 object가 JSON.stringfy 일때마다 실행됨

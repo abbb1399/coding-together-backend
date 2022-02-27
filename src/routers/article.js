@@ -144,7 +144,6 @@ router.patch('/articles/:id', auth, async (req,res) =>{
   try{
     // 글쓴이가 나일때만 업데이트
     const article = await Article.findOne({ _id: req.params.id, owner: req.user._id })
-    console.log(article)
 
     if(!article){
       return res.status(404).send()
