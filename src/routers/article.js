@@ -8,7 +8,7 @@ const router = new express.Router()
 const multer = require('multer')
 const sharp = require('sharp')
 
-
+// 공고 생성
 router.post('/articles', auth, async (req,res) => {
   const article = new Article({
     ...req.body,
@@ -47,7 +47,7 @@ router.get('/more-article-list/:page', async (req,res)=>{
     const articles = await Article.find(params).skip(pageNum).limit(4).sort({updatedAt: -1})
     res.send(articles)
   }catch(e){
-    res.sendStatus(500).send()
+    res.send(500).send()
   }
 })
 
@@ -58,19 +58,17 @@ router.get('/my-article', auth, async(req,res)=>{
   try{
     res.send(article)
   }catch(e){
-    console.log(e)
+    res.send(500).send()
   }
 })
 
 
 // 공고리스트 테스트
 router.get('/test', async (req,res)=>{
-  console.log(req.query.areas)
   const areas = {
     areas: req.query.areas
   }
-  console.log(areas)
-
+ 
   try{
     const articles = await Article.find({})
     
@@ -98,6 +96,7 @@ router.get('/articles', auth,  async (req,res) => {
   }
 
   try{
+    // const articles = await Article.find({owner: req.user._id})
     await req.user.populate({
       path: 'articles',
       match,
@@ -114,10 +113,12 @@ router.get('/articles', auth,  async (req,res) => {
   }
 })
 
+// 공고 id로 찾기
 router.get('/articles/:id',auth, async (req,res)=>{
   const _id = req.params.id
 
   try{
+    // 글쓴이가 나일 경우만
     const article = await Article.findOne({ _id, owner: req.user._id})
 
     if(!article){
@@ -133,7 +134,7 @@ router.get('/articles/:id',auth, async (req,res)=>{
 // 공고 업데이트
 router.patch('/articles/:id', auth, async (req,res) =>{
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['name','areas','description']
+  const allowedUpdates = ['name','areas','description','thumbnail']
   const isValidOperation = updates.every((update)=> allowedUpdates.includes(update))
 
   if(!isValidOperation){
@@ -141,12 +142,12 @@ router.patch('/articles/:id', auth, async (req,res) =>{
   }
 
   try{
-    // 글쓴이가 나일때
+    // 글쓴이가 나일때만 업데이트
     const article = await Article.findOne({ _id: req.params.id, owner: req.user._id })
     console.log(article)
 
     if(!article){
-      return res.status(400).send({error: '글주인이 아닙니다'})
+      return res.status(404).send()
     }
 
     updates.forEach((update)=> article[update] = req.body[update])
@@ -159,15 +160,18 @@ router.patch('/articles/:id', auth, async (req,res) =>{
 })
 
 
-// 공고 삭제
+// 내글 공고 삭제
+// '/article/:id'로 변경해야할듯 글선택 삭제로
 router.delete('/article', auth, async (req,res) =>{
   try{
+    // _id:req.params.id
     const article = await Article.findOneAndDelete({ owner: req.user._id })
 
     if(!article){
-      return res.status(404).send()
+      res.status(404).send()
     }
-    res.send()
+
+    res.send(article)
   }catch(e){
     res.status(500).send()
   }

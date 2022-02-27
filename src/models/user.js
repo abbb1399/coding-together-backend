@@ -125,10 +125,10 @@ userSchema.pre('save', async function(next){
   next()
 })
 
-// Delete articles when user is removed
+// 계정 탈퇴시 내가 쓴 공고들도 삭제 하기
 userSchema.pre('remove', async function (next) {
   const user = this
-  await Articles.deleteMany({ owner: user._id})
+  await Article.deleteMany({ owner: user._id})
   next()
 })
 

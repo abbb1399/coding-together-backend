@@ -47,7 +47,7 @@ router.post('/users/logout', auth, async (req,res) =>{
   }
 })
 
-// 로그아웃 all - 다른기기도 전부 로그아웃
+// 로그아웃 All - 다른기기도 전부 로그아웃
 router.post('/users/logoutAll', auth, async (req,res)=>{
   try{
     req.user.tokens = []
@@ -74,12 +74,14 @@ router.get('/users/usersList', async (req, res) => {
   }
 })
 
-
 // 내 프로필 보기
 router.get('/users/me',auth, async (req,res)=>{
-  res.send(req.user)
+  try{
+    res.send(req.user)
+  }catch(e){
+    res.status(500).send()
+  }
 })
-
 
 // 업데이트하기
 router.patch('/users/me', auth, async (req,res)=>{
@@ -101,11 +103,10 @@ router.patch('/users/me', auth, async (req,res)=>{
   }
 })
 
-// 삭제하기
+// 계정 삭제하기 - 계정삭제시 미들웨어에서 내가 쓴글도 삭제되도록 처리함
 router.delete('/users/me', auth, async (req,res)=>{
   try{
     await req.user.remove()
-    
     res.send(req.user)
   }catch(e){
     res.status(500).send()
@@ -127,7 +128,6 @@ const upload = multer({
   }
 })
 
-
 // 아바타 업로드
 router.post('/users/me/avatar', auth , upload.single('avatar') , async (req,res)=>{
   // sharp로 이미지 가공
@@ -140,13 +140,15 @@ router.post('/users/me/avatar', auth , upload.single('avatar') , async (req,res)
   res.status(400).send({ error : error.message })
 })
 
-
-
 // 아바타 삭제
 router.delete('/users/me/avatar', auth, upload.single('avatar'), async (req,res) =>{
-  req.user.avatar = undefined
-  await req.user.save()
-  res.send()
+  try{
+    req.user.avatar = undefined
+    await req.user.save()
+    res.send()
+  }catch(e){
+    res.status(500).send()
+  }
 })
 
 // 아바타 불러오기
