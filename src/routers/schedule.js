@@ -4,11 +4,7 @@ const auth = require('../middleware/auth')
 const router = new express.Router()
 
 // 일정 생성
-router.post('/schedules', auth, async(req,res) => {
-  console.log(req.body)
-  console.log(req.user._id)
-
-  
+router.post('/schedules', auth, async(req,res) => {  
   const schedule = new Schedule({
     ...req.body,
     owner: req.user._id
@@ -35,9 +31,8 @@ router.get('/schedules',auth, async(req,res) => {
 // 내 일정 수정
 router.patch('/schedules/:id',auth, async(req,res) => {
   const updates = Object.keys(req.body)
-  console.log(updates)
-  
-  const allowedUpdates = ['calendarId','title','location','category','start','end']
+
+  const allowedUpdates = ['calendarId','title','location','category','start','end','isAllDay','state']
   const isValidOperation = updates.every((update)=> allowedUpdates.includes(update))
 
   if(!isValidOperation){
@@ -51,7 +46,10 @@ router.patch('/schedules/:id',auth, async(req,res) => {
       return res.status(404).send()
     }
 
-    updates.forEach((update)=> schedule[update] = req.body[update])
+    updates.forEach((update)=> {
+      schedule[update] = req.body[update]
+    })
+    
     await schedule.save()
 
     res.send(schedule)

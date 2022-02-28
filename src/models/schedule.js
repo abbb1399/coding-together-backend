@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
 
 const scheduleSchema = new mongoose.Schema({
   id:{
@@ -31,6 +30,10 @@ const scheduleSchema = new mongoose.Schema({
     type:String,
     required:true
   },
+  state:{
+    type:String,
+    required:true
+  },
   start:{
     type: Date,
     required:true
@@ -38,6 +41,9 @@ const scheduleSchema = new mongoose.Schema({
   end:{
     type: Date,
     required:true
+  },
+  isAllDay:{
+    type:Boolean,
   },
   owner:{
     type: mongoose.Schema.Types.ObjectId,
