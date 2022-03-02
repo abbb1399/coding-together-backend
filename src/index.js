@@ -15,6 +15,8 @@ const userRouter = require('./routers/user')
 const articleRouter = require('./routers/article')
 const requestRouter = require('./routers/request')
 const scheduleRouter = require('./routers/schedule')
+const chatRoomRouter = require('./routers/chatRoom')
+const chatMessageRouter = require('./routers/chatMessage')
 
 const app = express()
 const port = process.env.PORT
@@ -39,10 +41,12 @@ app.use(userRouter)
 app.use(articleRouter)
 app.use(requestRouter)
 app.use(scheduleRouter)
+app.use(chatRoomRouter)
+app.use(chatMessageRouter)
 
 // 소켓 연결
 io.on('connection', (socket) =>{
-  console.log('소켓 연결')
+  // console.log('소켓 연결')
 
   socket.on('join',(options, callback)=>{
     const {error, user} = addUser({ id:socket.id, ...options })
@@ -53,8 +57,20 @@ io.on('connection', (socket) =>{
 
     socket.join(user.room)
 
-    socket.emit('message', generateMessage('Admin', '환영합니다. 대화를 자유롭게 하세요!') )
-    socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username}님이 입장하였습니다.!`))
+    // socket.emit('message', generateMessage('Admin', {
+    //     content: '환영합니다. 대화를 자유롭게 하세요!',
+    //     _id:'admin1234',
+    //     senderId:'admin1234'
+    //   }) 
+    // )
+    socket.broadcast.to(user.room).emit(
+      'message', 
+      generateMessage('Admin', {
+        content:`${user.username}님이 입장하였습니다.!`,
+        _id:'admin1234',
+        senderId:'admin1234'
+      })
+    )
     io.to(user.room).emit('roomData', {
       room: user.room,
       users: getUsersInRoom(user.room)
@@ -66,6 +82,7 @@ io.on('connection', (socket) =>{
   socket.on('sendMessage', (message, callback) => {
     const user = getUser(socket.id)
     
+    
     io.to(user.room).emit('message', generateMessage(user.username, message))
     callback()
   })
@@ -74,7 +91,11 @@ io.on('connection', (socket) =>{
     const user = removeUser(socket.id)
 
     if(user){
-      io.to(user.room).emit('message', generateMessage('Admin', `${user.username}님이 떠났습니다!`))
+      io.to(user.room).emit('message', generateMessage('Admin', {
+        content: `${user.username}님이 떠났습니다!`,
+        _id: 'admin1234',
+        senderId:'admin1234'
+      }))
       io.to(user.room).emit('roomData',{
         room: user.room,
         users: getUsersInRoom(user.room)

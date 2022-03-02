@@ -1,8 +1,11 @@
-const generateMessage = (username,text) =>{
+const generateMessage = (username, msg) =>{
   return{
+    _id: msg._id,
+    senderId: msg.senderId,
     username,
-    text,
-    createdAt: new Date().getTime()
+    text: msg.content,
+    date: new Date(),
+    timestamp: new Date().toString().substring(16, 21),
   }
 }
 

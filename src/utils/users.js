@@ -1,7 +1,7 @@
 const users = []
 
-const addUser = ({ id, username, room})=>{
-  // Clean the data
+const addUser = ({ id, username, room, date, email, userId})=>{
+  // 데이터 lowercase
   username = username.trim().toLowerCase()
   room = room.trim().toLowerCase()
 
@@ -12,20 +12,20 @@ const addUser = ({ id, username, room})=>{
     }
   }
 
-  // Check for exiting user
+  // 해당 유저가 이미 방에 들어와 있는지 확인 
   const exitingUser = users.find((user)=>{
-    return user.room === room && user.username === username
+    return user.room === room && user.username === username && user.userId === userId
   })  
 
   // Validate username
   if(exitingUser){
     return {
-      error: 'Username is in use!'
+      error: '이미 들어와잇습니다 ??'
     }
   }
 
-  // Store user
-  const user = { id,username, room }
+  // 유저 저장
+  const user = { id,username, room, date, email, userId }
   users.push(user)
   
   return { user }
