@@ -9,7 +9,6 @@ const generateMessage = (username, msg) =>{
   }
 }
 
-
 module.exports = {
   generateMessage
 }
