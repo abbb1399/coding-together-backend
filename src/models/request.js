@@ -11,13 +11,15 @@ const requestSchema = new mongoose.Schema({
     required:true,
     trim:true
   },
-  coachId:{
-    type: String,
+  owner:{
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: 'User'
   }
 },{
   timestamps: true
 })
+
 
 const Request = mongoose.model('Request', requestSchema)
 

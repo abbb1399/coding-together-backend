@@ -3,6 +3,7 @@ const Request = require('../models/request')
 const auth = require('../middleware/auth')
 const router = new express.Router()
 
+// 요청 등록
 router.post('/requests', async (req, res) =>{
 
   const request = new Request({
@@ -17,21 +18,13 @@ router.post('/requests', async (req, res) =>{
   }
 })
 
-router.get('/requests', async (req,res) =>{
-  try{
-    const requests = await Request.find({})
-    res.send(requests)
-  }catch(e){
-    res.status(500).send(e)
-  }
-})
 
-router.get('/requests/:userId', async (req,res)=>{
-  const userId = req.params.userId
+// 받은 요청 불러오기
+router.get('/requests/:ownerId', auth, async (req,res)=>{
+  const ownerId = req.params.ownerId
 
   try{
-    const request = await Request.find({coachId : userId})
-    // console.log(request)
+    const request = await Request.find({coachId : ownerId}).populate('owner')
 
     if(!request){
       return res.status(404).send()
