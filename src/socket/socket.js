@@ -43,6 +43,13 @@ module.exports = (io) => {
       io.to(user.roomId).emit('message', generateMessage(user.username, message))
       callback()
     })
+
+    socket.on('deleteMessage', (msgId, callback) => {
+      const user = getUser(socket.id)
+
+      io.to(user.roomId).emit('deleteMessage', msgId)
+      callback()
+    })
   
     socket.on('disconnect', () =>{
       const user = removeUser(socket.id)

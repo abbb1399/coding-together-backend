@@ -16,6 +16,10 @@ const chatMessageSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'ChatRoom'
+  },
+  deleted:{
+    type:Boolean,
+    default: false
   }
 },{
   timestamps: {createdAt: 'date'}
