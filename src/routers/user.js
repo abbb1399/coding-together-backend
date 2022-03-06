@@ -3,6 +3,8 @@ const multer = require('multer')
 const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const fs = require('fs')
+const path = require("path");
 const router = new express.Router()
 
 // 회원가입
@@ -113,61 +115,46 @@ router.delete('/users/me', auth, async (req,res)=>{
   }
 })
 
-// Multer 업로드
-const upload = multer({
-  // dest:'images',
-  limits:{
-    // 5메가 제한
-    fileSize: 5000000
+
+const storage = multer.diskStorage({
+  destination: function(req, file ,callback){
+    callback(null, "images/avatars/")
   },
-  fileFilter(req, file, cb){
-    if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-      return cb(new Error('jpg/jpeg/png 파일만 업로드 해주세요.'))
-    }
-    cb(undefined, true)
+  filename: function(req, file, callback){
+    const extension = path.extname(file.originalname);
+    const basename = path.basename(file.originalname, extension);
+    callback(null, basename + "-" + Date.now() + extension);
   }
-})
+});
+
+// 미들웨어 등록
+const upload = multer({
+  storage: storage
+});
+
 
 // 아바타 업로드
-router.post('/users/me/avatar', auth , upload.single('avatar') , async (req,res)=>{
-  // sharp로 이미지 가공
-  const buffer = await sharp(req.file.buffer).resize({ width:250, height:250 }).png().toBuffer()
-
-  req.user.avatar = buffer
+router.post('/avatar', auth, upload.single('avatar') , async (req, res) => {
+  
+  console.log( req.file.filename)
+  req.user.avatar = req.file.filename
+  
   await req.user.save()
   res.send()
-}, (error,req,res,next) => {
-  res.status(400).send({ error : error.message })
-})
+  
+}, (error,req,res,next)=>{
+  res.status(400).send({error: error.message})
+});
 
-// 아바타 삭제
-router.delete('/users/me/avatar', auth, upload.single('avatar'), async (req,res) =>{
-  try{
-    req.user.avatar = undefined
-    await req.user.save()
-    res.send()
-  }catch(e){
-    res.status(500).send()
-  }
-})
 
 // 아바타 불러오기
-router.get('/users/:id/avatar', async (req,res) =>{
-  try{
-    const user = await User.findById(req.params.id)
+router.get('/avatars/:avatar', function (req,res){
+  const filename = req.params.avatar
 
-    // if(!user || !user.avatar){
-    if(!user || !user.avatar){
-      throw new Error()
-    }
-    
-    // respone-header 세팅
-    res.set('Content-Type','image/png')
-    
-    res.send(user.avatar)
-  }catch(e){
-    res.status(404).send()
-  }
+  fs.readFile(`./images/avatars/${filename}`, function(error, data){
+    res.writeHead(200, {'Content-Type' : 'image/png'})
+    res.end(data)
+  })
 })
 
 module.exports = router

@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
     }
   }],
   avatar:{
-    type: Buffer
+    type: String
   }
 },{
   timestamps: true
@@ -79,8 +79,8 @@ userSchema.methods.toJSON = function(){
 
   delete userObject.password
   delete userObject.tokens
-  // 아바타까지 주면 너무큼 그래서 지움
-  delete userObject.avatar
+
+  // delete userObject.avatar
 
   return userObject
 }

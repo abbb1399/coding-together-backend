@@ -2,6 +2,7 @@ const users = []
 
 const addUser = ({ id, username, room, date, email, userId})=>{
   // 데이터 lowercase
+  
   username = username.trim().toLowerCase()
   room = room.trim().toLowerCase()
 

@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const requestSchema = new mongoose.Schema({
+  title:{
+    type:String,
+    trim:true
+  },
   email:{
     type:String,
     required:true,
@@ -15,7 +19,11 @@ const requestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User'
-  }
+  },
+  roomId:{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
 },{
   timestamps: true
 })

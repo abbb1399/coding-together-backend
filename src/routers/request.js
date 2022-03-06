@@ -20,17 +20,18 @@ router.post('/requests', async (req, res) =>{
 
 
 // 받은 요청 불러오기
-router.get('/requests/:ownerId', auth, async (req,res)=>{
-  const ownerId = req.params.ownerId
+router.get('/requests', auth, async (req,res)=>{
+  // console.log(req.user._id)
 
   try{
-    const request = await Request.find({coachId : ownerId}).populate('owner')
+    const requests = await Request.find({owner : req.user._id}).populate('owner')
 
-    if(!request){
-      return res.status(404).send()
-    }
+    // if(!requests){
+    //   return res.status(404).send()
+    // }
 
-    res.send(request)
+
+    res.send(requests)
   }catch(e){
     res.status(500).send()
   }

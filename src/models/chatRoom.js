@@ -1,17 +1,13 @@
 const mongoose = require('mongoose')
 
 const chatRoomSchema = new mongoose.Schema({
-  roomId:{
-    type: String,
-    required: true
-  },
   roomName:{
     type:String,
     required: true
   },
   avatar:{
     type:String,
-    required:true
+    // required:true
   },
   users:{
     type: Array,
@@ -21,13 +17,17 @@ const chatRoomSchema = new mongoose.Schema({
   timestamps: true
 })
 
-// virtual property with chatMessage
-chatRoomSchema.virtual('chatMessages', {
-  ref: 'ChatMessage',
-  localField: '_id',
-  foreignField: 'owner'
-  // 여기 user_id와 chatMessage onwer가 같을때
-})
+chatRoomSchema.methods.toJSON = function(){
+  const room = this
+  const roomObject = room.toObject()
+
+  roomObject.roomId = roomObject._id
+  delete roomObject._id
+
+  return roomObject
+}
+
+
 
 const Chatroom = mongoose.model('ChatRoom', chatRoomSchema)
 
