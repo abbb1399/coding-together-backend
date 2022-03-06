@@ -64,14 +64,6 @@ userSchema.virtual('articles', {
 })
 
 
-// virtual property with Schedule
-userSchema.virtual('schedules', {
-  ref: 'Schedule',
-  localField: '_id',
-  foreignField: 'owner'
-})
-
-
 // user에서 불필요한 정보제거하는 함수 - toJSON은 해당 object가 JSON.stringfy 일때마다 실행됨
 userSchema.methods.toJSON = function(){
   const user = this

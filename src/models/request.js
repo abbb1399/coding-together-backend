@@ -3,10 +3,6 @@ const mongoose = require('mongoose')
 const requestSchema = new mongoose.Schema({
   title:{
     type:String,
-    trim:true
-  },
-  email:{
-    type:String,
     required:true,
     trim:true
   },
@@ -14,6 +10,11 @@ const requestSchema = new mongoose.Schema({
     type:String,
     required:true,
     trim:true
+  },
+  userId:{
+    type: mongoose.Schema.Types.ObjectId,
+    required:true,
+    ref:'User'
   },
   owner:{
     type: mongoose.Schema.Types.ObjectId,

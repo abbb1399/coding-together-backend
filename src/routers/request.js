@@ -24,12 +24,7 @@ router.get('/requests', auth, async (req,res)=>{
   // console.log(req.user._id)
 
   try{
-    const requests = await Request.find({owner : req.user._id}).populate('owner')
-
-    // if(!requests){
-    //   return res.status(404).send()
-    // }
-
+    const requests = await Request.find({owner : req.user._id}).populate('owner').populate('userId')
 
     res.send(requests)
   }catch(e){

@@ -1,21 +1,21 @@
 const users = []
 
-const addUser = ({ id, username, room, date, email, userId})=>{
-  // 데이터 lowercase
-  
+const addUser = ({ id, username, room, userId, roomId})=>{
+
+  // 데이터 가다듬기
   username = username.trim().toLowerCase()
   room = room.trim().toLowerCase()
 
-  // Validate the data
-  if(!username || !room ){
+  // 데이터 검증
+  if(!username || !room || !roomId){
     return {
-      error: 'Username and room are required!'
+      error: '정보가 필요 합니다.'
     }
   }
 
   // 해당 유저가 이미 방에 들어와 있는지 확인 
   const exitingUser = users.find((user)=>{
-    return user.room === room && user.username === username && user.userId === userId
+    return user.roomId === roomId && user.username === username && user.userId === userId
   })  
 
   // Validate username
@@ -26,7 +26,7 @@ const addUser = ({ id, username, room, date, email, userId})=>{
   }
 
   // 유저 저장
-  const user = { id,username, room, date, email, userId }
+  const user = { id,username, room, userId, roomId }
   users.push(user)
   
   return { user }

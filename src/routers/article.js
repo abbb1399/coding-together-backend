@@ -82,30 +82,31 @@ router.get('/test', async (req,res)=>{
 // GET /articles?completed=false
 // GET /articles?limit=10&skip=20
 // GET /articles?sortBy=createdAt:desc
-router.get('/articles', auth,  async (req,res) => {
-  const match = {}
-  const sort = {}
+router.get('/articlestest', auth,  async (req,res) => {
+  // const match = {}
+  // const sort = {}
 
-  if(req.query.completed){
-    match.completed = req.query.completed === 'true'
-  }
+  // if(req.query.completed){
+  //   match.completed = req.query.completed === 'true'
+  // }
 
-  if(req.query.sortBy){
-    const parts = req.query.sortBy.split(':')
-    sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
-  }
+  // if(req.query.sortBy){
+  //   const parts = req.query.sortBy.split(':')
+  //   sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+  // }
 
   try{
     // const articles = await Article.find({owner: req.user._id})
     await req.user.populate({
       path: 'articles',
-      match,
-      options:{
-        limit: parseInt(req.query.limit) || null,
-        skip: parseInt(req.query.skip) || null,
-        sort
-      }
+      // match,
+      // options:{
+      //   limit: parseInt(req.query.limit) || null,
+      //   skip: parseInt(req.query.skip) || null,
+      //   sort
+      // }
     })
+
 
     res.send(req.user.articles)
   }catch(e){
@@ -117,9 +118,13 @@ router.get('/articles', auth,  async (req,res) => {
 router.get('/articles/:id',auth, async (req,res)=>{
   const _id = req.params.id
 
+
+
   try{
     // 글쓴이가 나일 경우만
     const article = await Article.findOne({ _id, owner: req.user._id})
+
+
 
     if(!article){
       return res.status(404).send()

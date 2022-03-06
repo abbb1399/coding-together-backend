@@ -47,7 +47,6 @@ router.patch('/chatroom', auth, async (req,res) =>{
   try{
     const chatRoom = await ChatRoom.findOne({ _id : req.body.roomId})
     
-    console.log(chatRoom)
     
     if(!chatRoom){
       return res.status(404).send()
@@ -56,14 +55,12 @@ router.patch('/chatroom', auth, async (req,res) =>{
     const newUser = {_id:req.user._id.toHexString() ,username:req.user.name}
     
 
-    if(chatRoom.users.find(el=> JSON.stringify(el) === JSON.stringify(newUser))){
-      console.log('중복입니다.')
-    }else{
+    if(chatRoom.users.find(el=> JSON.stringify(el) !== JSON.stringify(newUser))){
       chatRoom.users.push(newUser)
       chatRoom.save()
     }
-    
-    res.send(chatRoom)
+
+    res.send()
   }catch(e){
     res.status(500).send()
   }
