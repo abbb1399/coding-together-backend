@@ -34,7 +34,7 @@ router.post('/chatMessages', async(req,res)=>{
 })
 
 // 메세지 삭제하기
-router.patch('/chatMessages/:msgId', async(req,res)=>{  
+router.patch('/deleteMessage/:msgId', async(req,res)=>{  
   try{
     const message = await ChatMessage.findOneAndUpdate({ _id: req.params.msgId },{deleted:true})
 
@@ -48,6 +48,24 @@ router.patch('/chatMessages/:msgId', async(req,res)=>{
   }
 })
 
+// 메세지 수정하기
+router.patch('/updateMessage', async (req,res) => {
+  const {msgId, content, edited} = req.body
+  
+  try{
+    const message = await ChatMessage.findOne(
+      { _id: msgId },
+      {content, edited}
+    )
 
+    if(!message){
+      res.status(404).send()
+    }
+
+    res.send(message)
+  }catch(e){
+    res.status(500).send()
+  }
+})
 
 module.exports = router

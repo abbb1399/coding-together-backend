@@ -20,6 +20,9 @@ const chatMessageSchema = new mongoose.Schema({
   deleted:{
     type:Boolean,
     default: false
+  },
+  edited:{
+    type: Date
   }
 },{
   timestamps: {createdAt: 'date'}

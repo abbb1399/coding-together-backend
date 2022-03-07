@@ -35,7 +35,7 @@ module.exports = (io) => {
   
       callback()
     })
-  
+    
     socket.on('sendMessage', (message, callback) => {
       const user = getUser(socket.id)
       
@@ -51,6 +51,13 @@ module.exports = (io) => {
       callback()
     })
   
+    socket.on('updateMessage', (msgData ,callback) => {
+      const user = getUser(socket.id)
+
+      io.to(user.roomId).emit('updateMessage', msgData)
+      callback()
+    })
+    
     socket.on('disconnect', () =>{
       const user = removeUser(socket.id)
   
