@@ -42,6 +42,22 @@ router.get('/roomList', auth, async (req, res) =>{
 })
 
 
+// 입장한 방 정보 불러오기
+router.get('/chatroom/:roomId', async(req,res) => {
+  try{
+    const room = await ChatRoom.findOne({_id: req.params.roomId} )
+    
+    if(!room){
+      return res.status(404).send()
+    }
+
+    res.send(room)
+  }catch(e){
+    res.status(500).send()
+  }
+})
+
+
 // 방 입장
 router.patch('/chatroom', auth, async (req,res) =>{
   try{
