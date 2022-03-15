@@ -68,10 +68,11 @@ router.patch('/chatroom', auth, async (req,res) =>{
       return res.status(404).send()
     }
     
-    const newUser = {_id:req.user._id.toHexString() ,username:req.user.name}
+    const newUser = {_id:req.user._id, username:req.user.name}
     
+    const inRoom = chatRoom.users.find(user => JSON.stringify(user) === JSON.stringify(newUser))
 
-    if(chatRoom.users.find(el=> JSON.stringify(el) !== JSON.stringify(newUser))){
+    if(!inRoom){
       chatRoom.users.push(newUser)
       chatRoom.save()
     }

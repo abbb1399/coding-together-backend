@@ -20,6 +20,7 @@ const requestRouter = require('./routers/request')
 const scheduleRouter = require('./routers/schedule')
 const chatRoomRouter = require('./routers/chatRoom')
 const chatMessageRouter = require('./routers/chatMessage')
+const kanbanRouter = require('./routers/kanban')
 
 app.use(express.json()) // incoming json to object
 app.use(cors())
@@ -30,7 +31,7 @@ app.use(requestRouter)
 app.use(scheduleRouter)
 app.use(chatRoomRouter)
 app.use(chatMessageRouter)
-
+app.use(kanbanRouter)
 
 // 소켓 세팅
 // const io = socketio(server)
