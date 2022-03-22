@@ -2,7 +2,6 @@ const express = require('express')
 const Kanban = require('../models/kanban')
 const router = new express.Router()
 const auth = require('../middleware/auth')
-const { TopologyDescription } = require('mongodb')
 
 // Kanban Board 생성
 router.post('/kanbans', auth, async (req,res) => {
@@ -72,13 +71,21 @@ router.patch('/move-task', async(req,res) => {
 })
 
 // Task 이름 변경
-router.patch('/change-task-name', async (req,res) => {
-  const {boardId, taskId, taskName} = req.body
+router.patch('/update-task', async (req,res) => {
+  const {status, boardId, taskId, taskName, taskDate} = req.body
+
+  let searchConditon 
+
+  if(status === 'NAME'){
+    searchConditon = {$set: {"list.$[el].name": taskName } }
+  }else if(status === 'DATE'){
+    searchConditon =  {$set: {"list.$[el].date": taskDate } }
+  }
 
   try{
     await Kanban.findOneAndUpdate(
       {_id: boardId},
-      {$set: {"list.$[el].name": taskName } },
+      searchConditon,
       { 
         arrayFilters: [{ "el.id": taskId }],
         new: true
@@ -91,25 +98,6 @@ router.patch('/change-task-name', async (req,res) => {
   }
 })
 
-// Task 일정 변경
-router.patch('/change-task-date', async (req,res) => {
-  const {boardId, taskId, taskDate} = req.body
-
-  try{
-    await Kanban.findOneAndUpdate(
-      {_id: boardId},
-      {$set: {"list.$[el].date": taskDate } },
-      { 
-        arrayFilters: [{ "el.id": taskId }],
-        new: true
-      }
-    ) 
-      
-    res.send()
-  }catch(e){
-    res.status(500).send()
-  }
-})
 
 // Task 순서 변경
 router.patch('/change-task-order', async (req,res) => {

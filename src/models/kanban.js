@@ -16,9 +16,6 @@ const kanbanSchema = new mongoose.Schema({
   },
   dueDate:{
     type:Date
-  },
-  order:{
-    type:Number
   }
 },{
   timestamps: true
