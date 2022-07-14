@@ -23,19 +23,9 @@ router.post('/articles', auth, async (req,res) => {
   }
 })
 
-// 공고 불러오기
-router.get('/article-list', async (req,res)=>{
-  try{
-    const articles = await Article.find()
-    
-    res.send(articles)
-  }catch(e){
-    res.send(500).send()
-  }
-})
 
-// 공고 paginiation
-router.get('/more-article-list/:page', async (req,res)=>{
+// 공고 불러오기
+router.get('/articles/:page', async (req,res)=>{
   const pageNum = parseInt(req.params.page)
   
   const params = {}
@@ -44,37 +34,61 @@ router.get('/more-article-list/:page', async (req,res)=>{
   }
 
   try{
-    const articles = await Article.find(params).skip(pageNum).limit(4).sort({updatedAt: -1})
+    const articles = await Article.find(params)
+      .populate({path:'owner', select: 'name'})
+      .skip(pageNum)
+      .limit(4)
+      .sort({updatedAt: -1})
     res.send(articles)
   }catch(e){
-    res.send(500).send()
+    res.status(500).send()
   }
 })
 
-// 내 공고 보기
+// 공고 하나 보기
+router.get('/article/:id', async (req,res)=>{
+  const articleId = req.params.id
+
+  try{
+    const article = await Article.findOne({_id: articleId}).populate({path:'owner', select: 'name'})
+      
+    if(!article){
+      return res.status(404).send()
+    }
+    
+    res.send(article)
+
+  }catch(e){
+    res.status(500).send()
+  }
+})
+
+
+
+// 내가 쓴 공고 전부 보기
 router.get('/my-article', auth, async(req,res)=>{
-  const article = await Article.findOne({owner: req.user._id})
+  const articles = await Article.find({owner: req.user._id}).sort({createdAt: -1})
+
+  console.log(articles)
+  try{
+    res.send(articles)
+  }catch(e){
+    res.status(500).send()
+  }
+})
+
+
+
+// 내가 쓴 공고 하나(디테일) 보기
+router.get('/my-article/:id', auth, async(req,res)=>{
+  const articleId = req.params.id
+
+  const article = await Article.findOne({owner: req.user._id, _id: articleId})
   
   try{
     res.send(article)
   }catch(e){
-    res.send(500).send()
-  }
-})
-
-
-// 공고리스트 테스트
-router.get('/test', async (req,res)=>{
-  const areas = {
-    areas: req.query.areas
-  }
- 
-  try{
-    const articles = await Article.find({})
-    
-    res.send(articles)
-  }catch(e){
-    res.send(500).send()
+    res.status(500).send()
   }
 })
 
@@ -110,31 +124,27 @@ router.get('/articlestest', auth,  async (req,res) => {
 
     res.send(req.user.articles)
   }catch(e){
-    res.send(500).send()
+    res.status(500).send()
   }
 })
 
 // 공고 id로 찾기
-router.get('/articles/:id',auth, async (req,res)=>{
-  const _id = req.params.id
+// router.get('/articles/:id',auth, async (req,res)=>{
+//   const _id = req.params.id
 
+//   try{
+//     // 글쓴이가 나일 경우만
+//     const article = await Article.findOne({ _id, owner: req.user._id})
 
+//     if(!article){
+//       return res.status(404).send()
+//     }
 
-  try{
-    // 글쓴이가 나일 경우만
-    const article = await Article.findOne({ _id, owner: req.user._id})
-
-
-
-    if(!article){
-      return res.status(404).send()
-    }
-
-    res.send(article)
-  }catch(e){
-    res.status(500).send()
-  }
-})
+//     res.send(article)
+//   }catch(e){
+//     res.status(500).send()
+//   }
+// })
 
 // 공고 업데이트
 router.patch('/articles/:id', auth, async (req,res) =>{
@@ -218,6 +228,7 @@ const upload = multer({
 router.post('/images', upload.single('images') ,(req, res) => {
   res.send(req.file.filename)
 }, (error,req,res,next)=>{
+  console.log('errorrewrwer')
   res.status(400).send({error: error.message})
 });
 

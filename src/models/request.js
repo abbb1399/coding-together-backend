@@ -6,11 +6,11 @@ const requestSchema = new mongoose.Schema({
     required:true,
     trim:true
   },
-  message:{
-    type:String,
-    required:true,
-    trim:true
-  },
+  // message:{
+  //   type:String,
+  //   required:true,
+  //   trim:true
+  // },
   userId:{
     type: mongoose.Schema.Types.ObjectId,
     required:true,

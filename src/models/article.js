@@ -25,7 +25,8 @@ const articleSchema = new mongoose.Schema({
       ref: 'User'
     },
     thumbnail:{
-      type: String
+      type: String,
+      required:true
     }
 },{
   timestamps: true

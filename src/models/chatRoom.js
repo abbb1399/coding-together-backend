@@ -1,6 +1,11 @@
 const mongoose = require('mongoose')
 
 const chatRoomSchema = new mongoose.Schema({
+  roomId:{
+    type: mongoose.Schema.Types.ObjectId,
+    required:true,
+    unique:true
+  },
   roomName:{
     type:String,
     required: true
@@ -17,17 +22,15 @@ const chatRoomSchema = new mongoose.Schema({
   timestamps: true
 })
 
-chatRoomSchema.methods.toJSON = function(){
-  const room = this
-  const roomObject = room.toObject()
+// chatRoomSchema.methods.toJSON = function(){
+//   const room = this
+//   const roomObject = room.toObject()
 
-  roomObject.roomId = roomObject._id
-  delete roomObject._id
+//   roomObject.roomId = roomObject._id
+//   delete roomObject._id
 
-  return roomObject
-}
-
-
+//   return roomObject
+// }
 
 const Chatroom = mongoose.model('ChatRoom', chatRoomSchema)
 

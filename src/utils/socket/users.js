@@ -1,10 +1,10 @@
 const users = []
 
 const addUser = ({ id, username, room, userId, roomId})=>{
-
   // 데이터 가다듬기
   username = username.trim().toLowerCase()
-  room = room.trim().toLowerCase()
+  // room = room.trim().toLowerCase()
+  room = room.trim()
 
   // 데이터 검증
   if(!username || !room || !roomId){

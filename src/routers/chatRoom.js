@@ -4,13 +4,15 @@ const auth = require('../middleware/auth')
 const router = new express.Router()
 
 
+// 방이 있는지 확인
+router.get('/checkroom/:roomId', async(req,res) => {
+  try{
+    const room = await ChatRoom.find({ roomId: req.params.roomId})
 
-// 테스트
-router.get('/test123', async (req,res)=>{
-
-  const test = await ChatRoom.find({})
- 
-  res.send(test)
+    res.send(room)
+  }catch(e){
+    res.status(500).send()
+  }
 })
 
 
@@ -45,8 +47,8 @@ router.get('/roomList', auth, async (req, res) =>{
 // 입장한 방 정보 불러오기
 router.get('/chatroom/:roomId', async(req,res) => {
   try{
-    const room = await ChatRoom.findOne({_id: req.params.roomId} )
-    
+    const room = await ChatRoom.findOne({roomId: req.params.roomId} )
+
     if(!room){
       return res.status(404).send()
     }
@@ -61,7 +63,7 @@ router.get('/chatroom/:roomId', async(req,res) => {
 // 방 입장
 router.patch('/chatroom', auth, async (req,res) =>{
   try{
-    const chatRoom = await ChatRoom.findOne({ _id : req.body.roomId})
+    const chatRoom = await ChatRoom.findOne({ roomId : req.body.roomId})
     
     
     if(!chatRoom){

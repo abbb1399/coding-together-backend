@@ -77,7 +77,6 @@ userSchema.methods.toJSON = function(){
   return userObject
 }
 
-
 // instance에서 접근가능 (instance method) user
 userSchema.methods.generateAuthToken = async function(){
   const user = this
@@ -95,14 +94,14 @@ userSchema.statics.findByCredentials = async (email, password) =>{
   const user = await User.findOne({ email })
 
   if(!user){
-    throw new Error('Unable to login')
+    throw new Error('로그인 할 수 없습니다.')
   }
 
   // user.password는 hashedpassword
   const isMatched = await bycript.compare(password, user.password)
 
   if(!isMatched){
-    throw new Error('Unable to login')
+    throw new Error('로그인 할 수 없습니다.')
   }
 
   return user
