@@ -120,10 +120,7 @@ const upload = multer({
 
 // 아바타 업로드
 router.post('/avatar', auth, upload.single('avatar') , async (req, res) => {
-  
-  console.log( req.file.filename)
   req.user.avatar = req.file.filename
-  
   await req.user.save()
   res.send()
   
