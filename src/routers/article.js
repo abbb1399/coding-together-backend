@@ -223,7 +223,7 @@ const upload = multer({
     fileSize: 5000000,
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
       return cb(new Error("jpg/jpeg/png 파일만 업로드 해주세요."))
     }
     cb(undefined, true)
@@ -231,28 +231,25 @@ const upload = multer({
 })
 
 // 이미지 업로드
-router.post(
-  "/images",
-  upload.single("images"),
-  async (req, res) => {
+router.post("/images",upload.single("images"), async (req, res) => {
     const { path, destination, filename } = req.file
 
     sharp(path)
-      .resize({ width: 680, height: 510 })
-      .png()
-      .toFile(`${destination}re-${filename}`, (error, info) => {
+    .resize({ width: 680, height: 510 })
+    .png()
+    .toFile(`${destination}re-${filename}`, (error, info) => {
+      if (error) {
+        throw new Error("이미지 업로드 실패")
+      }
+
+      fs.unlink(destination + filename, (error) => {
         if (error) {
-          throw new Error("이미지 업로드 실패")
+          throw new Error("원본파일 삭제 실패")
         }
-
-        fs.unlink(destination + filename, (error) => {
-          if (error) {
-            throw new Error("원본파일 삭제 실패")
-          }
-        })
-
-        res.send("re-" + filename)
       })
+      console.log("re-" + filename)
+      res.send("re-" + filename)
+    })
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message })
