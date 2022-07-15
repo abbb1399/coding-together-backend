@@ -69,8 +69,7 @@ router.get("/my-article", auth, async (req, res) => {
   const articles = await Article.find({ owner: req.user._id }).sort({
     createdAt: -1,
   })
-
-  console.log(articles)
+  
   try {
     res.send(articles)
   } catch (e) {
@@ -176,11 +175,9 @@ router.patch("/articles/:id", auth, async (req, res) => {
 })
 
 // 내글 공고 삭제
-// '/article/:id'로 변경해야할듯 글선택 삭제로
-router.delete("/article", auth, async (req, res) => {
+router.delete("/article/:id", auth, async (req, res) => {
   try {
-    // _id:req.params.id
-    const article = await Article.findOneAndDelete({ owner: req.user._id })
+    const article = await Article.findOneAndDelete({ owner: req.user._id, _id: req.params.id })
 
     if (!article) {
       res.status(404).send()
@@ -258,7 +255,6 @@ router.post(
       })
   },
   (error, req, res, next) => {
-    console.log("errorrewrwer")
     res.status(400).send({ error: error.message })
   }
 )
