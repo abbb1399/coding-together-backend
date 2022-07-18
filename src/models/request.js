@@ -25,6 +25,12 @@ const requestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  isRead:{
+    type:Boolean,
+    default: false
+  }
+
+
 },{
   timestamps: true
 })

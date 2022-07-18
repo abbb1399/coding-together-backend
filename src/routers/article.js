@@ -34,7 +34,7 @@ router.get("/articles/:page", async (req, res) => {
 
   try {
     const articles = await Article.find(params)
-      .populate({ path: "owner", select: "name" })
+      // .populate({ path: "owner", select: "name email" })
       .skip(pageNum)
       .limit(4)
       .sort({ updatedAt: -1 })
@@ -69,7 +69,7 @@ router.get("/my-article", auth, async (req, res) => {
   const articles = await Article.find({ owner: req.user._id }).sort({
     createdAt: -1,
   })
-  
+
   try {
     res.send(articles)
   } catch (e) {
@@ -177,7 +177,10 @@ router.patch("/articles/:id", auth, async (req, res) => {
 // 내글 공고 삭제
 router.delete("/article/:id", auth, async (req, res) => {
   try {
-    const article = await Article.findOneAndDelete({ owner: req.user._id, _id: req.params.id })
+    const article = await Article.findOneAndDelete({
+      owner: req.user._id,
+      _id: req.params.id,
+    })
 
     if (!article) {
       res.status(404).send()
@@ -231,25 +234,27 @@ const upload = multer({
 })
 
 // 이미지 업로드
-router.post("/images",upload.single("images"), async (req, res) => {
+router.post(
+  "/images",
+  upload.single("images"),
+  async (req, res) => {
     const { path, destination, filename } = req.file
 
     sharp(path)
-    .resize({ width: 680, height: 510 })
-    .png()
-    .toFile(`${destination}re-${filename}`, (error, info) => {
-      if (error) {
-        throw new Error("이미지 업로드 실패")
-      }
-
-      fs.unlink(destination + filename, (error) => {
+      .resize({ fit: 'fill', width: 680, height: 510 })
+      .png()
+      .toFile(`${destination}re-${filename}`, (error, info) => {
         if (error) {
-          throw new Error("원본파일 삭제 실패")
+          throw new Error("이미지 업로드 실패")
         }
+
+        fs.unlink(destination + filename, (error) => {
+          if (error) {
+            throw new Error("원본파일 삭제 실패")
+          }
+        })
+        res.send("re-" + filename)
       })
-      console.log("re-" + filename)
-      res.send("re-" + filename)
-    })
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message })

@@ -51,18 +51,18 @@ const userSchema = new mongoose.Schema({
   avatar:{
     type: String
   }
-},{
+},{ 
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
   timestamps: true
 })
 
 // virtual property with Article
-userSchema.virtual('articles', {
-  ref: 'Article',
-  localField: '_id',
-  foreignField: 'owner'
-  // 여기 user_id와 article의 onwer id가 같을때
-})
-
+// userSchema.virtual('articles', {
+//   ref: 'Article',
+//   localField: '_id',
+//   foreignField: 'owner'
+// })
 
 // user에서 불필요한 정보제거하는 함수 - toJSON은 해당 object가 JSON.stringfy 일때마다 실행됨
 userSchema.methods.toJSON = function(){

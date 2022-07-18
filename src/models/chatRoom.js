@@ -17,7 +17,12 @@ const chatRoomSchema = new mongoose.Schema({
   users:{
     type: Array,
     // required: true
-  }
+  },
+  articleOwner:{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
 },{
   timestamps: true
 })
@@ -32,6 +37,6 @@ const chatRoomSchema = new mongoose.Schema({
 //   return roomObject
 // }
 
-const Chatroom = mongoose.model('ChatRoom', chatRoomSchema)
+const ChatRoom = mongoose.model('ChatRoom', chatRoomSchema)
 
-module.exports = Chatroom
+module.exports = ChatRoom

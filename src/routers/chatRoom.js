@@ -35,7 +35,7 @@ router.get('/roomList', auth, async (req, res) =>{
   const _id = req.user._id.toHexString()
 
   try{
-    const roomlist = await ChatRoom.find({ users: { $elemMatch: {_id}}})
+    const roomlist = await ChatRoom.find({ users: { $elemMatch: {_id}}}).populate({ path: "articleOwner", select: "name email" })
 
     res.send(roomlist)
   }catch(e){
@@ -70,7 +70,7 @@ router.patch('/chatroom', auth, async (req,res) =>{
       return res.status(404).send()
     }
     
-    const newUser = {_id:req.user._id, username:req.user.name}
+    const newUser = {_id:req.user._id.toHexString(), username:req.user.name}
     
     const inRoom = chatRoom.users.find(user => JSON.stringify(user) === JSON.stringify(newUser))
 

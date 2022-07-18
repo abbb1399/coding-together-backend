@@ -32,4 +32,26 @@ router.get('/requests', auth, async (req,res)=>{
   }
 })
 
+// 받은 요청 읽음 표시
+router.patch("/requests/:id", async (req, res) => {
+  
+  try {
+    const request = await Request.findOne({
+      _id: req.params.id,
+    })
+
+    if (!request) {
+      return res.status(404).send()
+    }
+
+    request.isRead = true
+    await request.save()
+
+    res.send()
+  } catch (e) {
+    res.status(400).send(e)
+  }
+})
+
+
 module.exports = router
