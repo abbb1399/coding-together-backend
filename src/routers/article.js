@@ -64,18 +64,42 @@ router.get("/article/:id", async (req, res) => {
   }
 })
 
-// 내가 쓴 공고 전부 보기
-router.get("/my-article", auth, async (req, res) => {
-  const articles = await Article.find({ owner: req.user._id }).sort({
-    createdAt: -1,
-  })
+router.get("/my-article/:page", auth, async (req, res) => {
+  const page = parseInt(req.params.page)
+  const perPage = 5
+  const skipPage =  page === 1 ? 0 : (page - 1) * perPage
 
   try {
-    res.send(articles)
+    Article.find({ owner: req.user._id })
+      .skip(skipPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 })
+      .exec(async (err, articles) => {
+        if (err) {
+          throw Error('에러~~');
+        }
+        const total = await Article.countDocuments({owner: req.user._id})
+    
+        res.send( {articles, total })
+      })
+
   } catch (e) {
     res.status(500).send()
   }
 })
+
+// 내가 쓴 공고 전부 보기
+// router.get("/my-article", auth, async (req, res) => {
+//   const articles = await Article.find({ owner: req.user._id }).sort({
+//     createdAt: -1,
+//   })
+
+//   try {
+//     res.send(articles)
+//   } catch (e) {
+//     res.status(500).send()
+//   }
+// })
 
 // 내가 쓴 공고 하나(디테일) 보기
 router.get("/my-article/:id", auth, async (req, res) => {
@@ -241,7 +265,7 @@ router.post(
     const { path, destination, filename } = req.file
 
     sharp(path)
-      .resize({ fit: 'fill', width: 680, height: 510 })
+      .resize({ fit: "fill", width: 680, height: 510 })
       .png()
       .toFile(`${destination}re-${filename}`, (error, info) => {
         if (error) {
