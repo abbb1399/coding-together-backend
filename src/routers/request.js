@@ -1,40 +1,50 @@
-const express = require('express')
-const Request = require('../models/request')
-const auth = require('../middleware/auth')
+const express = require("express")
+const Request = require("../models/request")
+const auth = require("../middleware/auth")
 const router = new express.Router()
 
 // 요청 등록
-router.post('/requests', async (req, res) =>{
-
+router.post("/requests", async (req, res) => {
   const request = new Request({
     ...req.body,
   })
 
-  try{
+  try {
     await request.save()
     res.status(201).send(request)
-  }catch(e){
+  } catch (e) {
     res.status(400).send(e)
   }
 })
 
-
 // 받은 요청 불러오기
-router.get('/requests', auth, async (req,res)=>{
-  // console.log(req.user._id)
+router.get("/requests/:page", auth, (req, res) => {
+  const page = parseInt(req.params.page)
+  const perPage = 5
+  const skipPage =  page === 1 ? 0 : (page - 1) * perPage
 
-  try{
-    const requests = await Request.find({owner : req.user._id}).populate('owner').populate('userId')
+  try {
+    Request.find({ owner: req.user._id })
+      .populate("owner userId")
+      .skip(skipPage)
+      .limit(perPage)
+      .exec(async (err, requests) => {
+        if (err) {
+          throw Error("에러~~")
+        }
+        const total = await Request.countDocuments({
+          owner: req.user._id
+        })
 
-    res.send(requests)
-  }catch(e){
+        res.send({ requests, total })
+      })
+  } catch (e) {
     res.status(500).send()
   }
 })
 
 // 받은 요청 읽음 표시
 router.patch("/requests/:id", async (req, res) => {
-  
   try {
     const request = await Request.findOne({
       _id: req.params.id,
@@ -52,6 +62,5 @@ router.patch("/requests/:id", async (req, res) => {
     res.status(400).send(e)
   }
 })
-
 
 module.exports = router

@@ -102,7 +102,7 @@ router.get("/my-article/:page", auth, async (req, res) => {
 // })
 
 // 내가 쓴 공고 하나(디테일) 보기
-router.get("/my-article/:id", auth, async (req, res) => {
+router.get("/my-article-detail/:id", auth, async (req, res) => {
   const articleId = req.params.id
 
   const article = await Article.findOne({ owner: req.user._id, _id: articleId })

@@ -31,13 +31,26 @@ router.post('/chatroom', async(req,res) =>{
 })
 
 // 내가 속하는 방 리스트 불러오기
-router.get('/roomList', auth, async (req, res) =>{
+router.get('/roomList/:page', auth, (req, res) =>{
   const _id = req.user._id.toHexString()
+  const page = parseInt(req.params.page)
+  const perPage = 5
+  const skipPage =  page === 1 ? 0 : (page - 1) * perPage
 
   try{
-    const roomlist = await ChatRoom.find({ users: { $elemMatch: {_id}}}).populate({ path: "articleOwner", select: "name email" })
+    ChatRoom.find({ users: { $elemMatch: {_id}}})
+      .populate({ path: "articleOwner", select: "name email" })
+      .skip(skipPage)
+      .limit(perPage)
+      .exec(async (err, roomlist) => {
+        if (err) {
+          throw Error('에러~~');
+        }
+        const total = await ChatRoom.countDocuments({users: { $elemMatch: {_id}}})
+    
+        res.send( {roomlist, total })
+      })
 
-    res.send(roomlist)
   }catch(e){
     res.status(500).send()
   }
