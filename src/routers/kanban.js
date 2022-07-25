@@ -71,13 +71,20 @@ router.patch("/tasks", async (req, res) => {
 
 // Task 이동
 router.patch("/move-task", async (req, res) => {
-  const { status, boardId, task } = req.body
+  const { status, boardId, task, newIndex } = req.body
 
   try {
     if (status === "added") {
       await Kanban.findOneAndUpdate(
         { _id: boardId },
-        { $push: { list: { id: task.id, name: task.name } } }
+        { 
+          $push: { 
+            list: {
+              $each: [{ id: task.id, name: task.name }], 
+              $position: newIndex 
+            }
+          } 
+        }
       )
     } else if (status === "removed") {
       await Kanban.findOneAndUpdate(
