@@ -21,7 +21,7 @@ router.post("/kanbans", auth, async (req, res) => {
 // Kanban Board 불러오기
 router.get("/kanbans", auth, async (req, res) => {
   try {
-    const kanbans = await Kanban.find({ owner: req.user._id })
+    const kanbans = await Kanban.find({ owner: req.user._id }).sort({ order: 1 })
     res.send(kanbans)
   } catch (e) {
     res.status(500).send()
@@ -46,6 +46,20 @@ router.patch("/kanbans", auth, async (req, res) => {
     res.send()
   } catch (e) {
     res.status(500).send()
+  }
+})
+
+// Kanban Board 순서 변경
+router.patch("/move-kanban", auth, async (req,res) => {
+  const {boardId, newIndex, oldIndex} = req.body
+
+  try{
+    await Kanban.findOneAndUpdate({ order: newIndex }, { order: oldIndex })
+    await Kanban.findOneAndUpdate({_id:boardId}, {order:newIndex})
+
+    res.send()
+  }catch(e){
+    console.log(e)
   }
 })
 
