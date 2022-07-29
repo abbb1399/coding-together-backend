@@ -21,7 +21,9 @@ router.post("/kanbans", auth, async (req, res) => {
 // Kanban Board 불러오기
 router.get("/kanbans", auth, async (req, res) => {
   try {
-    const kanbans = await Kanban.find({ owner: req.user._id }).sort({ order: 1 })
+    const kanbans = await Kanban.find({ owner: req.user._id }).sort({
+      order: 1,
+    })
     res.send(kanbans)
   } catch (e) {
     res.status(500).send()
@@ -40,7 +42,7 @@ router.patch("/kanbans", auth, async (req, res) => {
     }
 
     kanban.title = title
-    
+
     await kanban.save()
 
     res.send()
@@ -50,15 +52,36 @@ router.patch("/kanbans", auth, async (req, res) => {
 })
 
 // Kanban Board 순서 변경
-router.patch("/move-kanban", auth, async (req,res) => {
-  const {boardId, newIndex, oldIndex} = req.body
+router.patch("/move-kanban", auth, async (req, res) => {
+  const { boardId, newIndex, oldIndex } = req.body
 
-  try{
-    await Kanban.findOneAndUpdate({ order: newIndex }, { order: oldIndex })
+  try {
+    // 1. 기준값(oldIndex)를 잠시 -1로 빼둠
+    await Kanban.findOneAndUpdate({owner: req.user._id, order: oldIndex}, {order:-1})
+    
+    // 2-1. 한칸식 이동할때
+    if (Math.abs(newIndex - oldIndex) === 1) {
+      await Kanban.findOneAndUpdate({owner: req.user._id,order: newIndex }, { order: oldIndex })
+    } else {
+      await Kanban.findOneAndUpdate({owner: req.user._id ,order: oldIndex}, {order:-1})
+      // 2-2. 오른쪽/왼쪽으로 땡길지에 따라, 기준값을 기준삼아 위/아래로 +-/1 for문을 돌려준다.
+      // to the right
+      if(newIndex > oldIndex){
+        for (let index = newIndex; index > oldIndex ; index--) {
+          await Kanban.findOneAndUpdate({owner: req.user._id, order: index}, {order: index-1})
+        }
+      // to the left
+      }else{
+        for (let index = newIndex; index < oldIndex ; index++) {
+          await Kanban.findOneAndUpdate({owner: req.user._id , order: index}, {order:index+1})
+        }
+      }
+    }
+    //3. 새로 들어온 값~
     await Kanban.findOneAndUpdate({_id:boardId}, {order:newIndex})
-
+    
     res.send()
-  }catch(e){
+  } catch (e) {
     console.log(e)
   }
 })
@@ -91,13 +114,13 @@ router.patch("/move-task", async (req, res) => {
     if (status === "added") {
       await Kanban.findOneAndUpdate(
         { _id: boardId },
-        { 
-          $push: { 
+        {
+          $push: {
             list: {
-              $each: [{ id: task.id, name: task.name }], 
-              $position: newIndex 
-            }
-          } 
+              $each: [{ id: task.id, name: task.name }],
+              $position: newIndex,
+            },
+          },
         }
       )
     } else if (status === "removed") {
