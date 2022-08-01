@@ -62,8 +62,9 @@ router.patch("/move-kanban", auth, async (req, res) => {
     // 2-1. 한칸식 이동할때
     if (Math.abs(newIndex - oldIndex) === 1) {
       await Kanban.findOneAndUpdate({owner: req.user._id,order: newIndex }, { order: oldIndex })
+    
+    // 2-2. 오른쪽/왼쪽으로 땡길지에 따라, 기준값을 기준삼아 위/아래로 +-/1 for문을 돌려준다.
     } else {
-      // 2-2. 오른쪽/왼쪽으로 땡길지에 따라, 기준값을 기준삼아 위/아래로 +-/1 for문을 돌려준다.
       // to the right
       if(newIndex > oldIndex){
         for (let index = newIndex; index > oldIndex ; index--) {
@@ -83,7 +84,26 @@ router.patch("/move-kanban", auth, async (req, res) => {
   } catch (e) {
     console.log(e)
   }
+}) 
+
+// Kanban board 삭제
+router.delete("/kanban/:id", auth, async (req, res) => {
+  try {
+    const kanban = await Kanban.findOneAndDelete({
+      owner: req.user._id,
+      _id: req.params.id,
+    })
+
+    if (!kanban) {
+      res.status(404).send()
+    }
+
+    res.send(kanban)
+  } catch (e) {
+    res.status(500).send()
+  }
 })
+
 
 // Task 생성
 router.patch("/tasks", async (req, res) => {
@@ -174,6 +194,27 @@ router.patch("/change-task-order", async (req, res) => {
 
     await kanban.save()
     res.send()
+  } catch (e) {
+    res.status(500).send()
+  }
+})
+
+// Task 삭제
+router.delete("/delete-task", async (req, res) => {
+  const {boardId, taskId} = req.body
+
+  try {
+    const kanban = await Kanban.findOne({_id: boardId})
+
+    if (!kanban) {
+      res.status(404).send()
+    }
+    
+    const taskIndex = kanban.list.findIndex((list) => list.id === taskId)
+    kanban.list.splice(taskIndex,1)
+
+    await kanban.save()
+    res.send(kanban)
   } catch (e) {
     res.status(500).send()
   }
