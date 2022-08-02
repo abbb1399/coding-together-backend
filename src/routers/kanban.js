@@ -129,6 +129,13 @@ router.patch("/tasks", async (req, res) => {
 router.patch("/move-task", async (req, res) => {
   const { status, boardId, task, newIndex } = req.body
 
+  let listData
+  if(task.dueDate){
+    listData = { id: task.id, name: task.name, dueDate: task.dueDate }
+  }else{
+    listData = { id: task.id, name: task.name }
+  }
+  
   try {
     if (status === "added") {
       await Kanban.findOneAndUpdate(
@@ -136,7 +143,7 @@ router.patch("/move-task", async (req, res) => {
         {
           $push: {
             list: {
-              $each: [{ id: task.id, name: task.name }],
+              $each: [listData],
               $position: newIndex,
             },
           },
@@ -156,14 +163,14 @@ router.patch("/move-task", async (req, res) => {
 
 // Task 이름 변경
 router.patch("/update-task", async (req, res) => {
-  const { status, boardId, taskId, taskName, taskDate } = req.body
+  const { status, boardId, taskId, taskName, dueDate } = req.body
 
   let searchConditon
 
   if (status === "NAME") {
     searchConditon = { $set: { "list.$[el].name": taskName } }
   } else if (status === "DATE") {
-    searchConditon = { $set: { "list.$[el].date": taskDate } }
+    searchConditon = { $set: { "list.$[el].dueDate": dueDate } }
   }
 
   try {

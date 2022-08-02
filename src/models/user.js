@@ -3,6 +3,7 @@ const validator = require('validator')
 const bycript = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Article = require('./article')
+const Kanban = require('./kanban')
 
 const userSchema = new mongoose.Schema({
   name:{
@@ -122,14 +123,13 @@ userSchema.pre('save', async function(next){
   next()
 })
 
-// 계정 탈퇴시 내가 쓴 공고들도 삭제 하기
+// 계정 탈퇴시 내가 쓴 공고/칸반 들도 삭제 하기
 userSchema.pre('remove', async function (next) {
   const user = this
   await Article.deleteMany({ owner: user._id})
+  await Kanban.deleteMany({ owner: user._id})
   next()
 })
-
-
 
 const User = mongoose.model('User', userSchema)
 
