@@ -4,7 +4,7 @@ const auth = require('../middleware/auth')
 const router = new express.Router()
 
 // 해당방 메세지 모두 불러오기
-router.get('/chatMessages/:owner', async (req,res) =>{
+router.get('/chat-messages/:owner', async (req,res) =>{
   const owner = req.params.owner
 
   try{
@@ -13,6 +13,7 @@ router.get('/chatMessages/:owner', async (req,res) =>{
     if(!chatMessage){
       return res.status(404).send()
     }
+
     res.send(chatMessage)
   }catch(e){
     res.status(500).send()
@@ -20,7 +21,7 @@ router.get('/chatMessages/:owner', async (req,res) =>{
 })
 
 // 메세지 생성하기
-router.post('/chatMessages', async(req,res)=>{
+router.post('/chat-messages', async(req,res)=>{
   const chatMessage = new ChatMessage({
     ...req.body
   })
@@ -34,7 +35,7 @@ router.post('/chatMessages', async(req,res)=>{
 })
 
 // 메세지 삭제하기
-router.patch('/deleteMessage/:msgId', async(req,res)=>{  
+router.patch('/delete-message/:msgId', async(req,res)=>{  
   try{
     const message = await ChatMessage.findOneAndUpdate({ _id: req.params.msgId },{deleted:true})
 
@@ -49,20 +50,15 @@ router.patch('/deleteMessage/:msgId', async(req,res)=>{
 })
 
 // 메세지 수정하기
-router.patch('/updateMessage', async (req,res) => {
+router.patch('/update-message', async (req,res) => {
   const {msgId, content, edited} = req.body
   
   try{
-    const message = await ChatMessage.findOne(
+    await ChatMessage.findOneAndUpdate(
       { _id: msgId },
       {content, edited}
     )
-
-    if(!message){
-      res.status(404).send()
-    }
-
-    res.send(message)
+    res.send()
   }catch(e){
     res.status(500).send()
   }

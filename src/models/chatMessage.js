@@ -23,6 +23,10 @@ const chatMessageSchema = new mongoose.Schema({
   },
   edited:{
     type: Date
+  },
+  replyMessage:{
+    type: Object,
+    required: false
   }
 },{
   timestamps: {createdAt: 'date'}

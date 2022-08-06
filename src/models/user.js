@@ -108,8 +108,6 @@ userSchema.statics.findByCredentials = async (email, password) =>{
   return user
 }
 
-
-
 // 미들웨어 - hash plan text password before saving
 userSchema.pre('save', async function(next){
   // this는 save될 document를 가르킨다.

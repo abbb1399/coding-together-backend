@@ -5,8 +5,8 @@ module.exports = (io) => {
   io.on('connection', (socket) =>{
     // console.log('소켓 연결')
   
-    socket.on('join',(options, callback) => {
-      const {error, user} = addUser({ id:socket.id, ...options })
+    socket.on('join',(userInfo, callback) => {
+      const {error, user} = addUser({ id:socket.id, ...userInfo })
       
       if(error){
         return callback(error)
@@ -22,24 +22,23 @@ module.exports = (io) => {
       // )
       socket.broadcast.to(user.roomId).emit(
         'message', 
-        generateMessage('Admin', {
+        generateMessage('운영자', {
           _id:'admin1234',
           senderId:'admin1234',
           content:`${user.username}님이 입장하였습니다.!`
         })
       )
-      io.to(user.roomId).emit('roomData', {
-        roomId: user.roomId,
-        users: getUsersInRoom(user.roomId)
-      })
+      // io.to(user.roomId).emit('roomData', {
+      //   roomId: user.roomId,
+      //   users: getUsersInRoom(user.roomId)
+      // })
   
       callback()
     })
     
     socket.on('sendMessage', (message, callback) => {
       const user = getUser(socket.id)
-      
-      
+
       io.to(user.roomId).emit('message', generateMessage(user.username, message))
       callback()
     })
@@ -62,16 +61,16 @@ module.exports = (io) => {
       const user = removeUser(socket.id)
   
       if(user){
-        io.to(user.roomId).emit('message', generateMessage('Admin', {
+        io.to(user.roomId).emit('message', generateMessage('운영자', {
           content: `${user.username}님이 떠났습니다!`,
           _id: 'admin1234',
           senderId:'admin1234'
         }))
-        io.to(user.roomId).emit('roomData',{
-          roomId: user.roomId,
-          users: getUsersInRoom(user.roomId)
-        })
-        // console.log('나갓음')
+        // io.to(user.roomId).emit('roomData',{
+        //   roomId: user.roomId,
+        //   users: getUsersInRoom(user.roomId)
+        // })
+  
       }
     })
   })
