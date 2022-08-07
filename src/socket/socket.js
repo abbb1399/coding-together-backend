@@ -59,7 +59,7 @@ module.exports = (io) => {
     
     socket.on('disconnect', () =>{
       const user = removeUser(socket.id)
-  
+     
       if(user){
         io.to(user.roomId).emit('message', generateMessage('운영자', {
           content: `${user.username}님이 떠났습니다!`,

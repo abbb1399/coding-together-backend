@@ -57,7 +57,7 @@ router.patch("/move-kanban", auth, async (req, res) => {
 
   try {
     // 1. 기준값(oldIndex)를 잠시 -1로 빼둠
-    await Kanban.findOneAndUpdate({owner: req.user._id ,order: oldIndex}, {order:-1})
+    await Kanban.findOneAndUpdate({owner: req.user._id ,order: oldIndex}, {order:-2})
     
     // 2-1. 한칸식 이동할때
     if (Math.abs(newIndex - oldIndex) === 1) {
@@ -65,17 +65,24 @@ router.patch("/move-kanban", auth, async (req, res) => {
     
     // 2-2. 오른쪽/왼쪽으로 땡길지에 따라, 기준값을 기준삼아 위/아래로 +-/1 for문을 돌려준다.
     } else {
+      const boardArray = []
+      
       // to the right
-      if(newIndex > oldIndex){
+      if(newIndex >= oldIndex){
         for (let index = newIndex; index > oldIndex ; index--) {
-          await Kanban.findOneAndUpdate({owner: req.user._id, order: index}, {order: index-1})
+          const board = await Kanban.findOne({owner: req.user._id, order: index})
+          boardArray.push({id:board._id, order: index-1})
         }
       // to the left
       }else{
         for (let index = newIndex; index < oldIndex ; index++) {
-          await Kanban.findOneAndUpdate({owner: req.user._id , order: index}, {order:index+1})
+          const board = await Kanban.findOne({owner: req.user._id , order: index})
+          boardArray.push({id:board._id, order: index+1})
         }
       }
+      boardArray.forEach(async (el)=>{
+        await Kanban.findOneAndUpdate({_id:el.id}, {order:el.order})
+      })
     }
     //3. 새로 들어온 값~
     await Kanban.findOneAndUpdate({_id:boardId}, {order:newIndex})

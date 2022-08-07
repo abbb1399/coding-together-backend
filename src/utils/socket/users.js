@@ -21,7 +21,7 @@ const addUser = ({ id, username, room, userId, roomId})=>{
   // Validate username
   if(exitingUser){
     return {
-      error: '이미 들어와잇습니다 ??'
+      error: '이미 들어와잇습니다?'
     }
   }
 
@@ -39,7 +39,6 @@ const removeUser = (id) => {
     return users.splice(index, 1)[0]
   }
 }
-
 
 const getUser = (id) =>{
   return users.find((user) => user.id === id)
