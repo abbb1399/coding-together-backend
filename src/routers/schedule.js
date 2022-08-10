@@ -59,8 +59,8 @@ router.patch('/schedules/:id',auth, async(req,res) => {
 })
 
 // 내 일정 삭제
-router.delete('/schedules/:calendarId/:id',auth, async(req,res) => {
-  const {calendarId, id} = req.params
+router.delete('/schedules',auth, async(req,res) => {
+  const {calendarId, id} = req.body
 
   try{
     const schedule = await Schedule.findOneAndDelete(
