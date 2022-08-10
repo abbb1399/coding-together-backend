@@ -131,13 +131,13 @@ router.post('/avatar', auth, upload.single('avatar'), (req, res) => {
 
 
 // 아바타 불러오기
-// router.get('/avatars/:avatar', function (req,res){
-//   const filename = req.params.avatar
+router.get('/avatars/:avatar', function (req,res){
+  const filename = req.params.avatar
 
-//   fs.readFile(`./images/avatars/${filename}`, function(error, data){
-//     res.writeHead(200, {'Content-Type' : 'image/png'})
-//     res.end(data)
-//   })
-// })
+  fs.readFile(`./images/avatars/${filename}`, function(error, data){
+    res.writeHead(200, {'Content-Type' : 'image/png'})
+    res.end(data)
+  })
+})
 
 module.exports = router
