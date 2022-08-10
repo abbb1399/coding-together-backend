@@ -1,10 +1,10 @@
 const express = require('express')
-const multer = require('multer')
 const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const upload = require('../middleware/upload')
 const fs = require('fs')
-const path = require("path");
+
 const router = new express.Router()
 
 // 회원가입
@@ -101,42 +101,43 @@ router.delete('/users/me', auth, async (req,res)=>{
 })
 
 
-const storage = multer.diskStorage({
-  destination: function(req, file ,callback){
-    callback(null, "images/avatars/")
-  },
-  filename: function(req, file, callback){
-    const extension = path.extname(file.originalname);
-    const basename = path.basename(file.originalname, extension);
-    callback(null, basename + "-" + Date.now() + extension);
-  }
-});
-
-// 미들웨어 등록
-const upload = multer({
-  storage: storage
-});
-
-
 // 아바타 업로드
-router.post('/avatar', auth, upload.single('avatar') , async (req, res) => {
-  req.user.avatar = req.file.filename
-  await req.user.save()
-  res.send()
+router.post('/avatar', auth, upload.single('avatar'), (req, res) => {
+  const { path, destination, filename } = req.file
   
+  sharp(path)
+  .resize({ fit: "fill", width: 150, height: 150 })
+  .png()
+  .toFile(`${destination}av-${filename}`, async (error, info) => {
+    if (error) {
+      throw new Error("이미지 업로드 실패")
+    }
+
+    fs.unlink(destination + filename, (error) => {
+      if (error) {
+        throw new Error("원본파일 삭제 실패")
+      }
+    })
+    const reFilename = "av-" + filename
+
+    // user.avatar에 입력해주기
+    req.user.avatar = reFilename
+    await req.user.save()
+    res.send(reFilename)
+  })
 }, (error,req,res,next)=>{
   res.status(400).send({error: error.message})
 });
 
 
 // 아바타 불러오기
-router.get('/avatars/:avatar', function (req,res){
-  const filename = req.params.avatar
+// router.get('/avatars/:avatar', function (req,res){
+//   const filename = req.params.avatar
 
-  fs.readFile(`./images/avatars/${filename}`, function(error, data){
-    res.writeHead(200, {'Content-Type' : 'image/png'})
-    res.end(data)
-  })
-})
+//   fs.readFile(`./images/avatars/${filename}`, function(error, data){
+//     res.writeHead(200, {'Content-Type' : 'image/png'})
+//     res.end(data)
+//   })
+// })
 
 module.exports = router

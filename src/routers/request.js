@@ -28,6 +28,7 @@ router.get("/requests/:page", auth, (req, res) => {
       .populate("owner userId")
       .skip(skipPage)
       .limit(perPage)
+      .sort({ createdAt: -1 })
       .exec(async (err, requests) => {
         if (err) {
           throw Error("에러~~")

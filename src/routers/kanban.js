@@ -42,7 +42,7 @@ router.patch("/kanbans", auth, async (req, res) => {
     }
 
     kanban.title = title
-
+  
     await kanban.save()
 
     res.send()
@@ -57,7 +57,7 @@ router.patch("/move-kanban", auth, async (req, res) => {
 
   try {
     // 1. 기준값(oldIndex)를 잠시 -1로 빼둠
-    await Kanban.findOneAndUpdate({owner: req.user._id ,order: oldIndex}, {order:-2})
+    await Kanban.findOneAndUpdate({owner: req.user._id ,order: oldIndex}, {order:-1})
     
     // 2-1. 한칸식 이동할때
     if (Math.abs(newIndex - oldIndex) === 1) {

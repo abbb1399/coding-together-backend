@@ -4,8 +4,8 @@ const path = require("path")
 
 const Article = require("../models/article")
 const auth = require("../middleware/auth")
+const upload = require('../middleware/upload')
 const router = new express.Router()
-const multer = require("multer")
 const sharp = require("sharp")
 
 // 공고 생성
@@ -216,52 +216,9 @@ router.delete("/article/:id", auth, async (req, res) => {
   }
 })
 
-// Multer 업로드
-// const upload = multer({
-//   dest:'images',
-//   limits:{
-//     // 5메가 제한
-//     fileSize: 5000000
-//   },
-//   fileFilter(req, file, cb){
-//     if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-//       return cb(new Error('jpg/jpeg/png 파일만 업로드 해주세요.'))
-//     }
-//     cb(undefined, true)
-//   }
-// })
-
-const storage = multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, "images/")
-  },
-  filename: function (req, file, callback) {
-    const extension = path.extname(file.originalname)
-    const basename = path.basename(file.originalname, extension)
-    callback(null, basename + "-" + Date.now() + extension)
-  },
-})
-
-// 미들웨어 등록
-const upload = multer({
-  storage: storage,
-  limits: {
-    // 5메가 제한
-    fileSize: 5000000,
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
-      return cb(new Error("jpg/jpeg/png 파일만 업로드 해주세요."))
-    }
-    cb(undefined, true)
-  },
-})
 
 // 이미지 업로드
-router.post(
-  "/images",
-  upload.single("images"),
-  async (req, res) => {
+router.post("/images", upload.single("images"), async (req, res) => {
     const { path, destination, filename } = req.file
 
     sharp(path)
