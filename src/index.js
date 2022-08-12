@@ -42,7 +42,7 @@ const io = socketio(server,{
 })
 
 // Setup static directory to serve
-const publicDirectoryPath = path.join(__dirname,'../../frontend/src')
+const publicDirectoryPath = path.join(__dirname,'../public')
 app.use(express.static(publicDirectoryPath))
 
 
