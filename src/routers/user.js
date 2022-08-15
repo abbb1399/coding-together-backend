@@ -17,7 +17,7 @@ router.post('/users', async (req,res)=>{
     const token = await user.generateAuthToken()
     res.status(201).send({user, token})
   }catch(e){
-    res.status(400).send(e)
+    res.status(400).send('중복되는 이메일입니다.')
   }
 })
 
@@ -30,7 +30,7 @@ router.post('/users/login', async (req,res)=>{
 
     res.send({user, token})
   }catch(e){
-    res.status(400).send()
+    res.status(400).send('유효한 아이디/비밀번호를 입력해주세요.')
   }
 })
 
