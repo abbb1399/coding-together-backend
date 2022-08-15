@@ -218,24 +218,28 @@ router.delete("/article/:id", auth, async (req, res) => {
 
 
 // 이미지 업로드
-router.post("/images", upload.single("images"), async (req, res) => {
-    const { path, destination, filename } = req.file
+router.post("/images/:type", upload.single("images"), async (req, res) => {
+  const { path, destination, filename } = req.file
+  const type = req.params.type
+    
+  if(type === 'thumbnail'){
+    sharp(path).resize({ fit: "fill", width: 696, height: 512 })
+  }
 
-    sharp(path)
-      .resize({ fit: "fill", width: 680, height: 510 })
-      .png()
-      .toFile(`${destination}re-${filename}`, (error, info) => {
+  sharp(path)
+    .png()
+    .toFile(`${destination}re-${filename}`, (error, info) => {
+      if (error) {
+        throw new Error("이미지 업로드 실패")
+      }
+
+      fs.unlink(destination + filename, (error) => {
         if (error) {
-          throw new Error("이미지 업로드 실패")
+          throw new Error("원본파일 삭제 실패")
         }
-
-        fs.unlink(destination + filename, (error) => {
-          if (error) {
-            throw new Error("원본파일 삭제 실패")
-          }
-        })
-        res.send("re-" + filename)
       })
+      res.send("re-" + filename)
+    })
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message })
