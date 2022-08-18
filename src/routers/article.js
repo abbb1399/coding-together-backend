@@ -159,7 +159,6 @@ router.get("/articlestest", auth, async (req, res) => {
 //     if(!article){
 //       return res.status(404).send()
 //     }
-
 //     res.send(article)
 //   }catch(e){
 //     res.status(500).send()
