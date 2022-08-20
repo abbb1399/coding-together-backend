@@ -58,3 +58,5 @@ socket(io)
 server.listen(port, () => {
   console.log('서버 작동 중 PORT:' + port)
 })
+
+server.keepAliveTimeout = 65000
