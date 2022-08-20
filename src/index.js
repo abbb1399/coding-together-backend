@@ -25,7 +25,8 @@ const kanbanRouter = require('./routers/kanban')
 app.use(express.json()) // incoming json to object
 app.use(
   cors({
-    origin: '*'
+    origin: '*',
+    credentials:true
   })
 );
 
