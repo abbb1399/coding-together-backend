@@ -23,7 +23,12 @@ const chatMessageRouter = require('./routers/chatMessage')
 const kanbanRouter = require('./routers/kanban')
 
 app.use(express.json()) // incoming json to object
-app.use(cors())
+app.use(
+  cors({
+    origin: '*'
+  })
+);
+
 
 app.use(userRouter)
 app.use(articleRouter)
