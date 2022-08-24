@@ -23,13 +23,7 @@ const chatMessageRouter = require('./routers/chatMessage')
 const kanbanRouter = require('./routers/kanban')
 
 app.use(express.json()) // incoming json to object
-app.use(
-  cors({
-    origin: '*',
-    credentials:true
-  })
-);
-
+app.use(cors())
 
 app.use(userRouter)
 app.use(articleRouter)
@@ -51,13 +45,9 @@ const io = socketio(server,{
 const publicDirectoryPath = path.join(__dirname,'../public')
 app.use(express.static(publicDirectoryPath))
 
-
 // socket.io 코드
 socket(io)
 
 server.listen(port, () => {
   console.log('서버 작동 중 PORT:' + port)
 })
-
-
-server.keepAliveTimeout = 65000

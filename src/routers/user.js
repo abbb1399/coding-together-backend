@@ -4,7 +4,7 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const upload = require('../middleware/upload')
 const fs = require('fs')
-
+const { sendWelcomeEmail } = require('../email/aws-ses')
 const router = new express.Router()
 
 // 회원가입
@@ -13,8 +13,11 @@ router.post('/users', async (req,res)=>{
 
   try{
     await user.save()
+    // 회원가입 이메일
+    sendWelcomeEmail(user.email, user.name)
     // 토큰 생성
     const token = await user.generateAuthToken()
+    
     res.status(201).send({user, token})
   }catch(e){
     res.status(400).send('중복되는 이메일입니다.')
