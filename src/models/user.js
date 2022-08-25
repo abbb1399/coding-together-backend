@@ -34,15 +34,6 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
-  age:{
-    type: Number,
-    default: 0,
-    validate(value){
-      if(value < 0){
-        throw new Error('나이는 0보다 커야합니다.')
-      }
-    }
-  },
   tokens:[{
     token:{
       type:String,

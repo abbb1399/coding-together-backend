@@ -53,7 +53,7 @@ router.post('/users/logout', auth, async (req,res) =>{
   }
 })
 
-// 로그아웃 All - 다른기기도 전부 로그아웃
+// 로그아웃 All - 다른기기도 전부 로그아웃 (지금은 이걸 사용)
 router.post('/users/logoutAll', auth, async (req,res)=>{
   try{
     req.user.tokens = []
@@ -91,6 +91,7 @@ router.patch('/change-password', auth, async (req, res) => {
   try{
     const user = await User.findByCredentials(req.user.email, oldPassword)
         
+    // User 미들웨어에서 저장되기전에 암호화 처리함
     user.password = newPassword
     await user.save()
     res.send()
@@ -109,6 +110,7 @@ router.patch('/find-password', async (req, res) => {
 
     const newPassword = generatePassword()
     
+    // User 미들웨어에서 저장되기전에 암호화 처리함
     user.password = newPassword
     await user.save()
     
