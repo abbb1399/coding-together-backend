@@ -1,7 +1,5 @@
 const express = require("express")
 const fs = require("fs")
-const path = require("path")
-
 const Article = require("../models/article")
 const auth = require("../middleware/auth")
 const upload = require('../middleware/upload')
@@ -88,19 +86,6 @@ router.get("/my-article/:page", auth, async (req, res) => {
   }
 })
 
-// 내가 쓴 공고 전부 보기
-// router.get("/my-article", auth, async (req, res) => {
-//   const articles = await Article.find({ owner: req.user._id }).sort({
-//     createdAt: -1,
-//   })
-
-//   try {
-//     res.send(articles)
-//   } catch (e) {
-//     res.status(500).send()
-//   }
-// })
-
 // 내가 쓴 공고 하나(디테일) 보기
 router.get("/my-article-detail/:id", auth, async (req, res) => {
   const articleId = req.params.id
@@ -147,23 +132,6 @@ router.get("/articlestest", auth, async (req, res) => {
     res.status(500).send()
   }
 })
-
-// 공고 id로 찾기
-// router.get('/articles/:id',auth, async (req,res)=>{
-//   const _id = req.params.id
-
-//   try{
-//     // 글쓴이가 나일 경우만
-//     const article = await Article.findOne({ _id, owner: req.user._id})
-
-//     if(!article){
-//       return res.status(404).send()
-//     }
-//     res.send(article)
-//   }catch(e){
-//     res.status(500).send()
-//   }
-// })
 
 // 공고 업데이트
 router.patch("/articles/:id", auth, async (req, res) => {
@@ -246,10 +214,10 @@ router.post("/images/:type", upload.single("images"), async (req, res) => {
 )
 
 // 이미지 불러오기
-router.get("/images/:filename", function (req, res) {
+router.get("/images/:filename", (req, res) => {
   const filename = req.params.filename
 
-  fs.readFile(`./images/${filename}`, function (error, data) {
+  fs.readFile(`./images/${filename}`, (error, data) => {
     res.writeHead(200, { "Content-Type": "image/png" })
     res.end(data)
   })

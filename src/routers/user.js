@@ -4,8 +4,9 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const upload = require('../middleware/upload')
 const fs = require('fs')
-const { sendWelcomeEmail } = require('../email/aws-ses')
 const router = new express.Router()
+const { sendWelcomeEmail, sendNewPasswordEmail } = require('../email/aws-ses')
+const { generatePassword } = require('../utils/password/generate-password')
 
 // 회원가입
 router.post('/users', async (req,res)=>{
@@ -63,31 +64,57 @@ router.post('/users/logoutAll', auth, async (req,res)=>{
   }
 })
 
+// 업데이트하기
+// router.patch('/users/me', auth, async (req,res)=>{
+//   // 없는 property가 입력되면
+//   const updates = Object.keys(req.body)
+//   const allowedUpdates = ['name','email','password']
+//   const isValidOperation = updates.every((update)=> allowedUpdates.includes(update))
 
-// 내 프로필 보기
-router.get('/users/me',auth, async (req,res)=>{
+//   if(!isValidOperation){
+//     return res.status(400).send({error: 'Invalid Updates!'})
+//   }
+
+//   try{
+//     updates.forEach((update)=>  req.user[update] = req.body[update])
+//     await req.user.save()
+//     res.send(req.user)
+//   }catch(e){
+//     res.status(400).send(e)
+//   }
+// })
+
+// 비밀번호 변경
+router.patch('/change-password', auth, async (req, res) => {
+  const {oldPassword, newPassword} = req.body
+
   try{
-    res.send(req.user)
+    const user = await User.findByCredentials(req.user.email, oldPassword)
+        
+    user.password = newPassword
+    await user.save()
+    res.send()
   }catch(e){
-    res.status(500).send()
+    res.status(400).send(e.message)
   }
 })
 
-// 업데이트하기
-router.patch('/users/me', auth, async (req,res)=>{
-  // 없는 property가 입력되면
-  const updates = Object.keys(req.body)
-  const allowedUpdates = ['name','email','password','age']
-  const isValidOperation = updates.every((update)=> allowedUpdates.includes(update))
-
-  if(!isValidOperation){
-    return res.status(400).send({error: 'Invalid Updates!'})
-  }
+// 비밀번호 찾기
+router.patch('/find-password', async (req, res) => {
+  const {email} = req.body
+  console.log(email)
 
   try{
-    updates.forEach((update)=>  req.user[update] = req.body[update])
-    await req.user.save()
-    res.send(req.user)
+    const user = await User.findOne({ email })    
+
+    const newPassword = generatePassword()
+    
+    user.password = newPassword
+    await user.save()
+    
+    // 회원에게 바뀐 이메일 보내기
+    sendNewPasswordEmail(email, newPassword)
+    res.send()
   }catch(e){
     res.status(400).send(e)
   }
@@ -102,7 +129,6 @@ router.delete('/users/me', auth, async (req,res)=>{
     res.status(500).send()
   }
 })
-
 
 // 아바타 업로드
 router.post('/avatar', auth, upload.single('avatar'), (req, res) => {
@@ -134,10 +160,10 @@ router.post('/avatar', auth, upload.single('avatar'), (req, res) => {
 
 
 // 아바타 불러오기
-router.get('/avatars/:avatar', function (req,res){
+router.get('/avatars/:avatar', (req,res) => {
   const filename = req.params.avatar
 
-  fs.readFile(`./images/avatars/${filename}`, function(error, data){
+  fs.readFile(`./images/avatars/${filename}`, (error, data) => {
     res.writeHead(200, {'Content-Type' : 'image/png'})
     res.end(data)
   })

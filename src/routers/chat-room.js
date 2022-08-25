@@ -1,5 +1,5 @@
 const express = require('express')
-const ChatRoom = require('../models/chatRoom')
+const ChatRoom = require('../models/chat-room')
 const auth = require('../middleware/auth')
 const router = new express.Router()
 
@@ -94,7 +94,7 @@ router.patch('/chatroom', auth, async (req,res) =>{
 
     res.send()
   }catch(e){
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 

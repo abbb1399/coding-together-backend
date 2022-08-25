@@ -47,7 +47,7 @@ router.patch("/kanbans", auth, async (req, res) => {
 
     res.send()
   } catch (e) {
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 
@@ -89,7 +89,7 @@ router.patch("/move-kanban", auth, async (req, res) => {
     
     res.send()
   } catch (e) {
-    console.log(e)
+    res.status(400).send(e)
   }
 }) 
 
@@ -128,7 +128,7 @@ router.patch("/tasks", async (req, res) => {
 
     res.send()
   } catch (e) {
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 
@@ -164,7 +164,7 @@ router.patch("/move-task", async (req, res) => {
     }
     res.send()
   } catch (e) {
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 
@@ -188,7 +188,7 @@ router.patch("/update-task", async (req, res) => {
 
     res.send()
   } catch (e) {
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 
@@ -209,7 +209,7 @@ router.patch("/change-task-order", async (req, res) => {
     await kanban.save()
     res.send()
   } catch (e) {
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 

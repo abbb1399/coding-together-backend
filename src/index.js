@@ -18,8 +18,8 @@ const userRouter = require('./routers/user')
 const articleRouter = require('./routers/article')
 const requestRouter = require('./routers/request')
 const scheduleRouter = require('./routers/schedule')
-const chatRoomRouter = require('./routers/chatRoom')
-const chatMessageRouter = require('./routers/chatMessage')
+const chatRoomRouter = require('./routers/chat-room')
+const chatMessageRouter = require('./routers/chat-message')
 const kanbanRouter = require('./routers/kanban')
 
 app.use(express.json()) // incoming json to object

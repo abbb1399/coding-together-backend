@@ -1,6 +1,6 @@
 const express = require('express')
-const ChatMessage = require('../models/chatMessage')
-const auth = require('../middleware/auth')
+const ChatMessage = require('../models/chat-message')
+// const auth = require('../middleware/auth')
 const router = new express.Router()
 
 // 해당방 메세지 모두 불러오기
@@ -45,7 +45,7 @@ router.patch('/delete-message/:msgId', async(req,res)=>{
 
     res.send(message)
   }catch(e){
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 
@@ -60,7 +60,7 @@ router.patch('/update-message', async (req,res) => {
     )
     res.send()
   }catch(e){
-    res.status(500).send()
+    res.status(400).send(e)
   }
 })
 

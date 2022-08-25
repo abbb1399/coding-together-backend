@@ -2,9 +2,7 @@ module.exports = (io) => {
   const {generateMessage} = require('../utils/socket/messages')
   const { addUser, removeUser, getUser, getUsersInRoom} = require('../utils/socket/users')
 
-  io.on('connection', (socket) =>{
-    // console.log('소켓 연결')
-  
+  io.on('connection', (socket) =>{ 
     socket.on('join',(userInfo, callback) => {
       const {error, user} = addUser({ id:socket.id, ...userInfo })
       

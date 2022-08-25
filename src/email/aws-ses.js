@@ -8,9 +8,10 @@ const SES_CONFIG = {
 
 const AWS_SES = new AWS.SES(SES_CONFIG)
 
+// 회원가입 이메일
 const sendWelcomeEmail = (recipientEmail, name) => {
   const params = {
-    Source: "coding-together <admin@coding-together.com>",
+    Source: "Coding Together <admin@coding-together.com>",
     Destination: {
       ToAddresses: [recipientEmail],
     },
@@ -19,7 +20,9 @@ const sendWelcomeEmail = (recipientEmail, name) => {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: `${name}님 Coding Together에 회원가입하신걸 감사드립니다.`,
+          Data: `반갑습니다. ${name}님!<br>
+          Coding Together에 가입 하신걸 환영합니다.<br>
+          자유롭게 사용해주세요.`,
         },
       },
       Subject: {
@@ -31,6 +34,32 @@ const sendWelcomeEmail = (recipientEmail, name) => {
   return AWS_SES.sendEmail(params).promise()
 }
 
+// 비밀번호 찾기 이메일(해당 이메일로 새로운 비밀번호 발송)
+const sendNewPasswordEmail = (recipientEmail, newPassword) => {
+  const params = {
+    Source: "Coding Together <admin@coding-together.com>",
+    Destination: {
+      ToAddresses: [recipientEmail],
+    },
+    ReplyToAddresses: [],
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: `회원님의 새로운 비밀번호는 ${newPassword} 입니다.<br>
+          로그인 후, 비밀번호를 바꿔 사용해주세요.`,
+        },
+      },
+      Subject: {
+        Charset: "UTF-8",
+        Data: `Coding Together 비밀번호 찾기 이메일`,
+      },
+    },
+  }
+  return AWS_SES.sendEmail(params).promise()
+}
+
+// 템플릿 이메일 (나중에 사용)
 const sendTemplateEmail = (recipientEmail) => {
   const params = {
     Source: "coding-together <admin@coding-together.com>",
@@ -45,5 +74,6 @@ const sendTemplateEmail = (recipientEmail) => {
 
 module.exports = {
   sendWelcomeEmail,
+  sendNewPasswordEmail,
   sendTemplateEmail,
 }
