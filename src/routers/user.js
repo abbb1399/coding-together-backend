@@ -103,7 +103,6 @@ router.patch('/change-password', auth, async (req, res) => {
 // 비밀번호 찾기
 router.patch('/find-password', async (req, res) => {
   const {email} = req.body
-  console.log(email)
 
   try{
     const user = await User.findOne({ email })    
