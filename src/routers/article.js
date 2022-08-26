@@ -99,40 +99,6 @@ router.get("/my-article-detail/:id", auth, async (req, res) => {
   }
 })
 
-// GET /articles?completed=false
-// GET /articles?limit=10&skip=20
-// GET /articles?sortBy=createdAt:desc
-router.get("/articlestest", auth, async (req, res) => {
-  // const match = {}
-  // const sort = {}
-
-  // if(req.query.completed){
-  //   match.completed = req.query.completed === 'true'
-  // }
-
-  // if(req.query.sortBy){
-  //   const parts = req.query.sortBy.split(':')
-  //   sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
-  // }
-
-  try {
-    // const articles = await Article.find({owner: req.user._id})
-    await req.user.populate({
-      path: "articles",
-      // match,
-      // options:{
-      //   limit: parseInt(req.query.limit) || null,
-      //   skip: parseInt(req.query.skip) || null,
-      //   sort
-      // }
-    })
-
-    res.send(req.user.articles)
-  } catch (e) {
-    res.status(500).send()
-  }
-})
-
 // 공고 업데이트
 router.patch("/articles/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body)
