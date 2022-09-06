@@ -1,6 +1,6 @@
 const moment = require('moment')
 
-const generateMessage = (username, {_id,senderId,content, replyMessage, date}) =>{
+const generateMessage = (username, {_id,senderId,content, replyMessage}) =>{
   return{
     _id,
     senderId,
