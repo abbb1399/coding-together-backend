@@ -1,11 +1,13 @@
-const generateMessage = (username, {_id,senderId,content, replyMessage}) =>{
+const moment = require('moment')
+
+const generateMessage = (username, {_id,senderId,content, replyMessage, date}) =>{
   return{
     _id,
     senderId,
     username,
     content,
-    date: new Date(),
-    timestamp: new Date().toString().substring(16, 21),
+    date: moment().format("YYYY-MM-DD HH:mm"),
+    timestamp: moment().format("HH:mm"),
     replyMessage
   }
 }

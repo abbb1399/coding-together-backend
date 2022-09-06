@@ -42,6 +42,7 @@ router.get('/roomList/:page', auth, (req, res) =>{
       .populate({ path: "articleOwner", select: "name email" })
       .skip(skipPage)
       .limit(perPage)
+      .sort({ createdAt: -1 })
       .exec(async (err, roomlist) => {
         if (err) {
           throw Error('에러~~');
