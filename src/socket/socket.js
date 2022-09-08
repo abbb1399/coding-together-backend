@@ -36,6 +36,7 @@ module.exports = (io) => {
     
     socket.on('sendMessage', (message, callback) => {
       const user = getUser(socket.id)
+      console.log(generateMessage(user.username, message))
  
       io.to(user.roomId).emit('message', generateMessage(user.username, message))
       callback()

@@ -6,7 +6,7 @@ const generateMessage = (username, {_id,senderId,content, replyMessage}) =>{
     senderId,
     username,
     content,
-    date: moment().format("YYYY-MM-DD HH:mm"),
+    date: moment().format("YYYY-MM-DD"),
     timestamp: moment().format("HH:mm"),
     replyMessage
   }
