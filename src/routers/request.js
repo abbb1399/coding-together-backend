@@ -21,7 +21,7 @@ router.post("/requests", async (req, res) => {
 router.get("/requests/:page", auth, (req, res) => {
   const page = parseInt(req.params.page)
   const perPage = 5
-  const skipPage =  page === 1 ? 0 : (page - 1) * perPage
+  const skipPage = page === 1 ? 0 : (page - 1) * perPage
 
   try {
     Request.find({ owner: req.user._id })
@@ -34,7 +34,7 @@ router.get("/requests/:page", auth, (req, res) => {
           throw Error("에러~~")
         }
         const total = await Request.countDocuments({
-          owner: req.user._id
+          owner: req.user._id,
         })
 
         res.send({ requests, total })
@@ -61,6 +61,20 @@ router.patch("/requests/:id", async (req, res) => {
     res.send()
   } catch (e) {
     res.status(400).send(e)
+  }
+})
+
+// 안읽은 요청 갯수 불러오기
+router.get("/unread-requests", auth, async (req, res) => {
+  try {
+    const unreadRequests = await Request.count({
+      owner: req.user._id,
+      isRead: false,
+    })
+
+    res.send({ unreadRequests })
+  } catch (e) {
+    res.status(500).send()
   }
 })
 

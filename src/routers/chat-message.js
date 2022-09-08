@@ -4,11 +4,11 @@ const ChatMessage = require('../models/chat-message')
 const router = new express.Router()
 
 // 해당방 메세지 모두 불러오기
-router.get('/chat-messages/:owner', async (req,res) =>{
-  const owner = req.params.owner
+router.get('/chat-messages/:roomId', async (req,res) =>{
+  const roomId = req.params.roomId
 
   try{
-    const chatMessage = await ChatMessage.find({ owner })
+    const chatMessage = await ChatMessage.find({ owner: roomId })
 
     if(!chatMessage){
       return res.status(404).send()
