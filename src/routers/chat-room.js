@@ -41,7 +41,7 @@ router.get("/roomList/:page", auth, (req, res) => {
       .populate({ path: "articleOwner", select: "name email" })
       .skip(skipPage)
       .limit(perPage)
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .exec(async (error, rooms) => {
         if (error) {
           throw Error("에러~~")
@@ -60,6 +60,7 @@ router.get("/roomList/:page", auth, (req, res) => {
             users: room.users,
             articleOwner: room.articleOwner,
             createdAt: room.createdAt,
+            updatedAt: room.updatedAt,
             latestMsg: latest.deleted ? '삭제 되었습니다.' : latest.content,
           }     
           roomlist.push(roomData)
