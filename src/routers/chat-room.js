@@ -52,7 +52,7 @@ router.get("/roomList/:page", auth, (req, res) => {
         for(let room of rooms){
           // 제일 마지막 메세지 (5번 돌아서 큰 부담은 없을듯)
           const [latest] = await ChatMessage.find({owner:room.roomId}).sort({date: -1}).limit(1)
-
+          
           const roomData = {
             roomId: room.roomId,
             roomName: room.roomName,
@@ -60,7 +60,7 @@ router.get("/roomList/:page", auth, (req, res) => {
             users: room.users,
             articleOwner: room.articleOwner,
             createdAt: room.createdAt,
-            latestMsg: latest ? latest.content : '메세지 없음'
+            latestMsg: latest.deleted ? '삭제 되었습니다.' : latest.content,
           }     
           roomlist.push(roomData)
         }
