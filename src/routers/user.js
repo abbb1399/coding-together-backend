@@ -170,4 +170,20 @@ router.get('/avatars/:avatar', (req,res) => {
   })
 })
 
+// 내가 입장한 채팅방 
+router.patch("/in-chat-room", auth, async (req, res) => {
+  const {articleId, chatRoomId}= req.body
+  
+  try {
+    const user = await User.findOne({email:req.user.email})
+        
+    user.inChatRoom.push({articleId, chatRoomId})
+
+    await user.save()
+    res.send({articleId, chatRoomId})
+  } catch (e) {
+    res.status(400).send(e)
+  }
+})
+
 module.exports = router

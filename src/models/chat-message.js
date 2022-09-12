@@ -12,8 +12,7 @@ const chatMessageSchema = new mongoose.Schema({
   username:{
     type:String
   },
-  // articleId = roomId = owner. 나중에 이름 바꿔 줄 필요 있음.
-  owner:{
+  roomId:{
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'ChatRoom'

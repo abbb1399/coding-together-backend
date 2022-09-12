@@ -8,7 +8,7 @@ router.get('/chat-messages/:roomId', async (req,res) =>{
   const roomId = req.params.roomId
 
   try{
-    const chatMessage = await ChatMessage.find({ owner: roomId })
+    const chatMessage = await ChatMessage.find({ roomId })
 
     if(!chatMessage){
       return res.status(404).send()

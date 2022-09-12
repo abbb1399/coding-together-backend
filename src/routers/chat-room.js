@@ -4,17 +4,6 @@ const ChatMessage = require("../models/chat-message")
 const auth = require("../middleware/auth")
 const router = new express.Router()
 
-// 방이 있는지 확인
-router.get("/checkroom/:roomId", async (req, res) => {
-  try {
-    const room = await ChatRoom.find({ roomId: req.params.roomId })
-
-    res.send(room)
-  } catch (e) {
-    res.status(500).send()
-  }
-})
-
 // 방생성
 router.post("/chatroom", async (req, res) => {
   const chatRoom = new ChatRoom({
@@ -51,10 +40,10 @@ router.get("/roomList/:page", auth, (req, res) => {
         const roomlist = []
         for(let room of rooms){
           // 제일 마지막 메세지 (5번 돌아서 큰 부담은 없을듯)
-          const [latest] = await ChatMessage.find({owner:room.roomId}).sort({date: -1}).limit(1)
+          const [latest] = await ChatMessage.find({roomId:room._id}).sort({date: -1}).limit(1)
           
           const roomData = {
-            roomId: room.roomId,
+            roomId: room._id,
             roomName: room.roomName,
             avatar: room.avatar,
             users: room.users,
@@ -76,7 +65,7 @@ router.get("/roomList/:page", auth, (req, res) => {
 // 입장한 방 정보 불러오기
 router.get("/chatroom/:roomId", async (req, res) => {
   try {
-    const room = await ChatRoom.findOne({ roomId: req.params.roomId })
+    const room = await ChatRoom.findOne({ _id: req.params.roomId })
 
     if (!room) {
       return res.status(404).send()
@@ -91,7 +80,7 @@ router.get("/chatroom/:roomId", async (req, res) => {
 // 방 입장
 router.patch("/chatroom", auth, async (req, res) => {
   try {
-    const chatRoom = await ChatRoom.findOne({ roomId: req.body.roomId })
+    const chatRoom = await ChatRoom.findOne({ _id: req.body.roomId })
 
     if (!chatRoom) {
       return res.status(404).send()

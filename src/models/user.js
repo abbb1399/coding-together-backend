@@ -42,7 +42,17 @@ const userSchema = new mongoose.Schema({
   }],
   avatar:{
     type: String
-  }
+  },
+  inChatRoom:[{
+    articleId:{
+      type:String,
+      required:true
+    },
+    chatRoomId:{
+      type:String,
+      required:true
+    }
+  }]
 },{ 
   timestamps: true
 })
