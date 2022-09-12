@@ -1,17 +1,17 @@
 const users = []
 
-const addUser = ({ id, username, room, userId, roomId})=>{
-  // 데이터 가다듬기
-  username = username.trim().toLowerCase()
-  // room = room.trim().toLowerCase()
-  room = room.trim()
-
+const addUser = ({ id, username, room, userId, roomId})=>{  
   // 데이터 검증
   if(!username || !room || !roomId){
     return {
       error: '정보가 필요 합니다.'
     }
   }
+
+  // 데이터 가다듬기
+  username = username.trim().toLowerCase()
+  // room = room.trim().toLowerCase()
+  room = room.trim()
 
   // 해당 유저가 이미 방에 들어와 있는지 확인 
   const exitingUser = users.find((user)=>{
