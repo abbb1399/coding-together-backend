@@ -15,7 +15,7 @@ router.post('/users', async (req,res)=>{
   try{
     await user.save()
     // 회원가입 이메일
-    sendWelcomeEmail(user.email, user.name)
+    // sendWelcomeEmail(user.email, user.name)
     // 토큰 생성
     const token = await user.generateAuthToken()
     
@@ -170,8 +170,8 @@ router.get('/avatars/:avatar', (req,res) => {
   })
 })
 
-// 내가 입장한 채팅방 
-router.patch("/in-chat-room", auth, async (req, res) => {
+// 내가 입장한 채팅방
+router.post("/in-chat-room", auth, async (req, res) => {
   const {articleId, chatRoomId}= req.body
   
   try {
