@@ -23,7 +23,7 @@ module.exports = (io) => {
         generateMessage('운영자', {
           _id:'admin1234',
           senderId:'admin1234',
-          content:`${user.username}님이 입장하였습니다.!`
+          content:`${user.username}님이 입장하였습니다.`
         })
       )
       // io.to(user.roomId).emit('roomData', {
@@ -60,7 +60,7 @@ module.exports = (io) => {
      
       if(user){
         io.to(user.roomId).emit('message', generateMessage('운영자', {
-          content: `${user.username}님이 떠났습니다!`,
+          content: `${user.username}님이 떠났습니다.`,
           _id: 'admin1234',
           senderId:'admin1234'
         }))

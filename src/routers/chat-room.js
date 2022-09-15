@@ -6,8 +6,13 @@ const router = new express.Router()
 
 // 방생성
 router.post("/chatroom", async (req, res) => {
+  const {roomName, avatar, users, articleOwner } = req.body
+  
   const chatRoom = new ChatRoom({
-    ...req.body,
+    roomName,
+    avatar,
+    users,
+    articleOwner
   })
 
   try {
