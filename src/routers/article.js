@@ -155,9 +155,9 @@ router.post("/images/:type", upload.single("images"), async (req, res) => {
   const { path, destination, filename } = req.file
   const type = req.params.type
     
-  if(type === 'thumbnail'){
-    sharp(path).resize({ fit: "fill", width: 696, height: 512 })
-  }
+  // if(type === 'thumbnail'){
+  //   sharp(path).resize({ fit: "fill", width: 696, height: 512 })
+  // }
 
   sharp(path)
     .png()

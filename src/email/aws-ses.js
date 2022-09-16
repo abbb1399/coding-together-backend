@@ -8,18 +8,46 @@ const SES_CONFIG = {
 
 const AWS_SES = new AWS.SES(SES_CONFIG)
 
-// 웰컴 이메일
-const sendWelcomeEmail = (recipientEmail,userName) => {
+
+const sendWelcomeEmail = (recipientEmail, name) => {
   const params = {
     Source: "Coding Together <admin@coding-together.com>",
-    Template: "welcome-email",
     Destination: {
       ToAddresses: [recipientEmail],
     },
-    TemplateData: `{ \"name\":\"${userName}\"}`
+    ReplyToAddresses: [],
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: `반갑습니다. ${name}님!<br>
+          Coding Together에 가입 하신걸 환영합니다.<br>
+          자유롭게 사용해주세요.`,
+        },
+      },
+      Subject: {
+        Charset: "UTF-8",
+        Data: `반갑습니다. ${name}님!`,
+      },
+    },
   }
-  return AWS_SES.sendTemplatedEmail(params).promise()
+  return AWS_SES.sendEmail(params).promise()
 }
+
+
+// 웰컴 이메일 Template
+// const sendWelcomeEmail = (recipientEmail,userName) => {
+//   const params = {
+//     Source: "Coding Together <admin@coding-together.com>",
+//     Template: "welcome-email",
+//     Destination: {
+//       ToAddresses: [recipientEmail],
+//     },
+//     TemplateData: `{ \"name\":\"${userName}\"}`
+//   }
+//   return AWS_SES.sendTemplatedEmail(params).promise()
+// }
+
 
 // 비밀번호 찾기 이메일(해당 이메일로 새로운 비밀번호 발송)
 const sendNewPasswordEmail = (recipientEmail, newPassword) => {
