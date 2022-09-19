@@ -15,7 +15,7 @@ router.post('/users', async (req,res)=>{
   try{
     await user.save()
     // 회원가입 이메일
-    // sendWelcomeEmail(user.email, user.name)
+    sendWelcomeEmail(user.email, user.name)
     // 토큰 생성
     const token = await user.generateAuthToken()
     
@@ -53,7 +53,7 @@ router.post('/users/logout', auth, async (req,res) =>{
   }
 })
 
-// 로그아웃 All - 다른기기도 전부 로그아웃 (지금은 이걸 사용)
+// 로그아웃 All - 다른기기도 전부 로그아웃
 router.post('/users/logoutAll', auth, async (req,res)=>{
   try{
     req.user.tokens = []

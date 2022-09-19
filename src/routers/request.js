@@ -67,7 +67,7 @@ router.patch("/requests/:id", async (req, res) => {
 // 안읽은 요청 갯수 불러오기
 router.get("/unread-requests", auth, async (req, res) => {
   try {
-    const unreadRequests = await Request.count({
+    const unreadRequests = await Request.countDocuments({
       owner: req.user._id,
       isRead: false,
     })

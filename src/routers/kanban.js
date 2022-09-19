@@ -93,19 +93,29 @@ router.patch("/move-kanban", auth, async (req, res) => {
   }
 }) 
 
-// Kanban board 삭제
-router.delete("/kanban/:id", auth, async (req, res) => {
+// Kanban board 삭제boardInfo
+router.delete("/kanban", auth, async (req, res) => {
+  const { boardId, maxLength } = req.body
+
   try {
-    const kanban = await Kanban.findOneAndDelete({
+    const deletedKanban = await Kanban.findOneAndDelete({
       owner: req.user._id,
-      _id: req.params.id,
+      _id: boardId,
     })
 
-    if (!kanban) {
+    if (!deletedKanban) {
       res.status(404).send()
     }
+    const deletedOrder = deletedKanban.order
 
-    res.send(kanban)
+    if(deletedOrder < maxLength){
+      // 삭제 된 order위로 하나씩 줄여줌
+      for (let index = deletedOrder; index < maxLength ; index++) {
+        await Kanban.findOneAndUpdate({owner: req.user._id , order: index+1}, {order: index})
+      }
+    }
+  
+    res.send(deletedKanban)
   } catch (e) {
     res.status(500).send()
   }
