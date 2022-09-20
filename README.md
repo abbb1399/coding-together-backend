@@ -1,4 +1,4 @@
-# coding-together-backend
+# Coding Together Backend!
 
 ## 기술 스택
 > **백엔드**
