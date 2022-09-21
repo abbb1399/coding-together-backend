@@ -21,7 +21,7 @@ const addUser = ({ id, username, room, userId, roomId})=>{
   // Validate username
   if(exitingUser){
     return {
-      error: '이미 들어와잇습니다?'
+      error: '다른 기기 혹은 브라우저의 채팅방에서 먼저 나와주세요.'
     }
   }
 
