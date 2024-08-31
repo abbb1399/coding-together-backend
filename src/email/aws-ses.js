@@ -1,13 +1,12 @@
-const AWS = require("aws-sdk")
+const AWS = require("aws-sdk");
 
 const SES_CONFIG = {
   accessKeyId: process.env.SES_ACCESS_KEY_ID,
   secretAccessKey: process.env.SES_SECRET_ACCESS_KEY,
   region: "ap-northeast-2",
-}
+};
 
-const AWS_SES = new AWS.SES(SES_CONFIG)
-
+const AWS_SES = new AWS.SES(SES_CONFIG);
 
 const sendWelcomeEmail = (recipientEmail, name) => {
   const params = {
@@ -30,10 +29,9 @@ const sendWelcomeEmail = (recipientEmail, name) => {
         Data: `반갑습니다. ${name}님!`,
       },
     },
-  }
-  return AWS_SES.sendEmail(params).promise()
-}
-
+  };
+  return AWS_SES.sendEmail(params).promise();
+};
 
 // 웰컴 이메일 Template
 // const sendWelcomeEmail = (recipientEmail,userName) => {
@@ -47,7 +45,6 @@ const sendWelcomeEmail = (recipientEmail, name) => {
 //   }
 //   return AWS_SES.sendTemplatedEmail(params).promise()
 // }
-
 
 // 비밀번호 찾기 이메일(해당 이메일로 새로운 비밀번호 발송)
 const sendNewPasswordEmail = (recipientEmail, newPassword) => {
@@ -70,11 +67,11 @@ const sendNewPasswordEmail = (recipientEmail, newPassword) => {
         Data: `Coding Together 비밀번호 찾기 이메일`,
       },
     },
-  }
-  return AWS_SES.sendEmail(params).promise()
-}
+  };
+  return AWS_SES.sendEmail(params).promise();
+};
 
 module.exports = {
   sendWelcomeEmail,
-  sendNewPasswordEmail
-}
+  sendNewPasswordEmail,
+};

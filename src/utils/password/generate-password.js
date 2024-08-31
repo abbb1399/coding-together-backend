@@ -1,16 +1,16 @@
 const generatePassword = () => {
-  let password = ""
+  let password = "";
   const str =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789@#$"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789@#$";
 
   for (let i = 1; i <= 8; i++) {
-    const char = Math.floor(Math.random() * str.length + 1)
-    password += str.charAt(char)
+    const char = Math.floor(Math.random() * str.length + 1);
+    password += str.charAt(char);
   }
 
-  return password
-}
+  return password;
+};
 
 module.exports = {
-  generatePassword
-}
+  generatePassword,
+};

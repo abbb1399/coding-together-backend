@@ -1,57 +1,61 @@
-const users = []
+const users = [];
 
-const addUser = ({ id, username, room, userId, roomId})=>{  
+const addUser = ({ id, username, room, userId, roomId }) => {
   // 데이터 검증
-  if(!username || !room || !roomId){
+  if (!username || !room || !roomId) {
     return {
-      error: '정보가 필요 합니다.'
-    }
+      error: "정보가 필요 합니다.",
+    };
   }
 
   // 데이터 가다듬기
-  username = username.trim().toLowerCase()
+  username = username.trim().toLowerCase();
   // room = room.trim().toLowerCase()
-  room = room.trim()
+  room = room.trim();
 
-  // 해당 유저가 이미 방에 들어와 있는지 확인 
-  const exitingUser = users.find((user)=>{
-    return user.roomId === roomId && user.username === username && user.userId === userId
-  })  
+  // 해당 유저가 이미 방에 들어와 있는지 확인
+  const exitingUser = users.find((user) => {
+    return (
+      user.roomId === roomId &&
+      user.username === username &&
+      user.userId === userId
+    );
+  });
 
   // Validate username
-  if(exitingUser){
+  if (exitingUser) {
     return {
-      error: '다른 기기 혹은 브라우저의 채팅방에서 먼저 나와주세요.'
-    }
+      error: "다른 기기 혹은 브라우저의 채팅방에서 먼저 나와주세요.",
+    };
   }
 
   // 유저 저장
-  const user = { id,username, room, userId, roomId }
-  users.push(user)
-  
-  return { user }
-}
+  const user = { id, username, room, userId, roomId };
+  users.push(user);
+
+  return { user };
+};
 
 const removeUser = (id) => {
-  const index = users.findIndex((user)=> user.id === id)
+  const index = users.findIndex((user) => user.id === id);
 
-  if(index !== -1){
-    return users.splice(index, 1)[0]
+  if (index !== -1) {
+    return users.splice(index, 1)[0];
   }
-}
+};
 
-const getUser = (id) =>{
-  return users.find((user) => user.id === id)
-}
+const getUser = (id) => {
+  return users.find((user) => user.id === id);
+};
 
-const getUsersInRoom = (room) =>{
-  room = room.trim().toLowerCase()
-  return users.filter((user)=> user.room === room )
-}
+const getUsersInRoom = (room) => {
+  room = room.trim().toLowerCase();
+  return users.filter((user) => user.room === room);
+};
 
 module.exports = {
   addUser,
   removeUser,
   getUser,
-  getUsersInRoom
-}
+  getUsersInRoom,
+};

@@ -1,37 +1,40 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const articleSchema = new mongoose.Schema({
+const articleSchema = new mongoose.Schema(
+  {
     name: {
-      type:String,
-      required:true,
-      trim:true
+      type: String,
+      required: true,
+      trim: true,
     },
-    areas:{
-      type:Array,
-      required:true
+    areas: {
+      type: Array,
+      required: true,
     },
-    description:{
-      type:String,
-      required:true
+    description: {
+      type: String,
+      required: true,
       // default:'설명 없음'
     },
-    completed:{
+    completed: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    owner:{
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: "User",
     },
-    thumbnail:{
+    thumbnail: {
       type: String,
-      required:true
-    }
-},{
-  timestamps: true
-})
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
 
-const Article = mongoose.model('Article',articleSchema)
+const Article = mongoose.model("Article", articleSchema);
 
-module.exports = Article
+module.exports = Article;
